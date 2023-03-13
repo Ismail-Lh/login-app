@@ -1,13 +1,5 @@
 import toast from 'react-hot-toast';
 
-export const validateField = async values => {
-	const fieldName = Object.keys(values);
-
-	const errors = verifyField({}, values, fieldName[0]);
-
-	return errors;
-};
-
 const verifyField = (errors = {}, values, field) => {
 	const pswRegExp = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
@@ -31,13 +23,21 @@ const verifyField = (errors = {}, values, field) => {
 	return errors;
 };
 
+export const validateField = async values => {
+	const fieldName = Object.keys(values);
+
+	const errors = verifyField({}, values, fieldName[0]);
+
+	return errors;
+};
+
 /** validate reset password */
 export async function resetPasswordValidation(values) {
 	const fieldName = Object.keys(values);
 
 	const errors = verifyField({}, values, fieldName[0]);
 
-	if (values.password !== values.confirm_pwd) {
+	if (values.password !== values.confirmPassword) {
 		errors.exist = toast.error('Password not match...!');
 	}
 
