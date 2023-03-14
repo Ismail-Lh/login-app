@@ -4,14 +4,14 @@ import { Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
-import { validateField } from '../helpers/validate';
+import { validateFields } from '../helpers/validate';
 
 const Password = () => {
 	const formik = useFormik({
 		initialValues: {
 			password: '',
 		},
-		validate: validateField,
+		validate: validateFields,
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
