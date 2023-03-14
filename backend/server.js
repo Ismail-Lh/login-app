@@ -6,6 +6,12 @@ import colors from 'colors';
 
 import connectDB from './config/connectDB.js';
 
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+
+import loggerMiddleware from './middlewares/loggerMiddleware.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
+
 // ?: CONFIGURATION
 dotenv.config();
 const app = express();
@@ -14,6 +20,7 @@ const PORT = process.env.PORT || 8080;
 const NODE_ENV = process.env.NODE_ENV;
 
 // ?: GLOBAL MIDDLEWARE
+app.use(loggerMiddleware);
 app.use(express.json());
 app.use(cors());
 app.use(morgan('tiny'));
@@ -25,9 +32,9 @@ app.disable('x-powered-by');
 // app.use('/', globalRoute);
 
 // ?: GENERAL ROUTES
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/notes', noteRoutes);
-// app.use('/api/auth', authRoutes);
 
 // ?: NOT FOUND ROUTES
 // app.all('*', (req, res) => {
@@ -42,7 +49,7 @@ app.disable('x-powered-by');
 // });
 
 // ?: GLOBAL ERROR HANDLER MIDDLEWARE
-// app.use(errorHandler);
+app.use(errorMiddleware);
 
 // ?: SERVER AND DATABASE CONNECTION
 // !: run the server only when we have a valid DB connection
