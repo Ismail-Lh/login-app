@@ -9,6 +9,20 @@ export const authentication = async (req, res) => {
 // *@route POST /api/auth/register
 // *@access PUBLIC
 export const register = async (req, res) => {
+	const { username, email, password, profile } = req.body;
+
+	// !: Check for required fields
+	if (!username || !email || !password)
+		return res.status(401).json({ message: 'All fields are required!' });
+
+	// !: Check for duplicate users
+	const userExist = await User.findOne({ username }).lean().exit();
+
+	if (userExist)
+		return res
+			.status(409)
+			.json({ message: 'Username already used! Please try another one!' });
+
 	res.json('register route');
 };
 
