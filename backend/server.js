@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
 
+import connectDB from './config/connectDB.js';
+
 // ?: CONFIGURATION
 dotenv.config();
 const app = express();
@@ -42,10 +44,13 @@ app.disable('x-powered-by');
 // ?: GLOBAL ERROR HANDLER MIDDLEWARE
 // app.use(errorHandler);
 
-// ?: SERVER
-app.listen(PORT, () =>
-	console.log(
-		`Server running in ${NODE_ENV} mode on port http://localhost:${PORT}`.yellow
-			.underline.bold
+// ?: SERVER AND DATABASE CONNECTION
+// !: run the server only when we have a valid DB connection
+connectDB().then(() =>
+	app.listen(PORT, () =>
+		console.log(
+			`Server running in ${NODE_ENV} mode on port http://localhost:${PORT}`
+				.yellow.underline.bold
+		)
 	)
 );
