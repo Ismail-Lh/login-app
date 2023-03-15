@@ -23,10 +23,10 @@ const userSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-// // !: Compare the password
-// userSchema.methods.matchPassword = async function (enteredPassword) {
-// 	return await bcrypt.compare(enteredPassword, this.password);
-// };
+// !: Compare the password
+userSchema.methods.matchPassword = async function (enteredPassword) {
+	return await bcrypt.compare(enteredPassword, this.password);
+};
 
 // !: Password encryption (hash)
 userSchema.pre('save', async function (next) {

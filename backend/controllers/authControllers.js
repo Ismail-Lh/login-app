@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { accessToken } from '../helpers/generateToken.js';
 
 // *@desc User authentication
 // *@route POST /api/auth
@@ -62,7 +63,35 @@ export const registerMail = async (req, res) => {
 // *@route POST /api/auth/login
 // *@access PUBLIC
 export const login = async (req, res) => {
-	res.json('login route');
+	const { username, password } = req.body;
+
+	// !: Check for required fields
+	if (!username || !password)
+		return res.status(400).json({ message: 'All Fields are required!' });
+
+	// !: Check if the user exist
+	const user = await User.findOne({ username }).exec();
+
+	// !: Compare the password
+	const isMatched = await user?.matchPassword(password);
+
+	if (!user || !isMatched)
+		res.status(401).json({
+			message:
+				'Unauthorized user, invalid username or password. Please try again.',
+		});
+
+	// !: Remove the password
+	user.password = undefined;
+
+	// ?: Create an accessToken
+	const access_token = accessToken(user);
+
+	res.status(200).json({
+		message: 'Login successfully...',
+		username: user.username,
+		access_token,
+	});
 };
 
 // *@desc Generate a 6 digit OTP
