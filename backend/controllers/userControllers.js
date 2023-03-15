@@ -19,16 +19,20 @@ export const getUser = async (req, res) => {
 	res.status(201).json({ user });
 };
 
-// *@desc Update the user profile
-// *@route PATCH /api/users/update-user?id="userId"
+// *@desc Update the current user profile
+// *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
-export const updateUser = async (req, res) => {
-	const { id } = req.query;
+export const updateCurrentUser = async (req, res) => {
+	const id = req.user._id;
+
 	const { firstName, lastName, email, mobile, address, profile, username } =
 		req.body;
 
 	if (!id)
-		return res.status(401).json({ message: 'Please provide a user id query.' });
+		return res.status(401).json({
+			message:
+				'Unauthorized user, you are not logged in. Please log in again to get access...',
+		});
 
 	const user = await User.findById(id).select('-password').exec();
 

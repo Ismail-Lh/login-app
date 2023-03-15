@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { getUser, updateUser } from '../controllers/userControllers.js';
+import { getUser, updateCurrentUser } from '../controllers/userControllers.js';
+import { protectedRoute } from '../middleware/protectedRoute.js';
 
 const router = Router();
 
@@ -8,9 +9,9 @@ const router = Router();
 // *@access PRIVATE
 router.route('/:username').get(getUser);
 
-// *@desc Update the user profile
-// *@route PATCH /api/users/update-user?id="userId"
+// *@desc Update the current user profile
+// *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
-router.route('/update-user').patch(updateUser);
+router.route('/update-current-user').patch(protectedRoute, updateCurrentUser);
 
 export default router;

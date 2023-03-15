@@ -10,8 +10,8 @@ import connectDB from './config/connectDB.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
-import loggerMiddleware from './middlewares/loggerMiddleware.js';
-import errorMiddleware from './middlewares/errorMiddleware.js';
+import loggerMiddleware from './middleware/loggerMiddleware.js';
+import errorMiddleware from './middleware/errorMiddleware.js';
 
 // ?: CONFIGURATION
 dotenv.config();
