@@ -1,3 +1,5 @@
+import User from '../models/User.js';
+
 // *@desc User authentication
 // *@route POST /api/auth
 // *@access public
@@ -13,17 +15,40 @@ export const register = async (req, res) => {
 
 	// !: Check for required fields
 	if (!username || !email || !password)
-		return res.status(401).json({ message: 'All fields are required!' });
+		return res.status(400).json({ message: 'All fields are required!' });
 
 	// !: Check for duplicate users
-	const userExist = await User.findOne({ username }).lean().exit();
+	const usernameExistPromise = User.findOne({ username })
+		.collation({ locale: 'en', strength: 2 })
+		.lean()
+		.exec();
 
-	if (userExist)
+	const emailExistPromise = User.findOne({ email })
+		.collation({ locale: 'en', strength: 2 })
+		.lean()
+		.exec();
+
+	const [usernameExist, emailExist] = await Promise.all([
+		usernameExistPromise,
+		emailExistPromise,
+	]);
+
+	if (usernameExist || emailExist)
+		return res.status(409).json({
+			message: 'User already exist! Please try again!',
+		});
+
+	// ?: Create a new user
+	const newUser = await User.create({ username, password, email, profile });
+
+	if (newUser)
 		return res
-			.status(409)
-			.json({ message: 'Username already used! Please try another one!' });
+			.status(201)
+			.json({ message: `New user ${newUser.username} created!` });
 
-	res.json('register route');
+	res
+		.status(400)
+		.json({ message: 'Invalid user data received. Please try again.' });
 };
 
 // *@desc Send the email
