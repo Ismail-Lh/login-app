@@ -9,8 +9,8 @@ const router = Router();
 router.route('/:username').get(getUser);
 
 // *@desc Update the user profile
-// *@route GET /api/users/update-user
+// *@route PATCH /api/users/update-user?id="userId"
 // *@access PRIVATE
-router.route('/update-user').put(updateUser);
+router.route('/update-user').patch(updateUser);
 
 export default router;
