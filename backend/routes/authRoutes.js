@@ -9,6 +9,7 @@ import {
 	resetPassword,
 	verifyOtp,
 } from '../controllers/authControllers.js';
+import { checkUser, localVariables } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -35,12 +36,12 @@ router.route('/login').post(login);
 // *@desc Generate a 6 digit OTP
 // *@route GET /api/auth/generate-otp
 // *@access public
-router.route('/generate-otp').get(generateOtp);
+router.route('/generate-otp').get(checkUser, localVariables, generateOtp);
 
 // *@desc Verify the OTP
 // *@route /api/auth/verify-otp
 // *@access public
-router.route('/verify-otp').get(verifyOtp);
+router.route('/verify-otp').get(checkUser, verifyOtp);
 
 // *@desc Reset all the variables
 // *@route /api/auth/create-reset-session

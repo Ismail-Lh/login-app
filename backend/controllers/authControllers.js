@@ -1,3 +1,5 @@
+import otpGenerator from 'otp-generator';
+
 import User from '../models/User.js';
 import { accessToken } from '../helpers/generateToken.js';
 
@@ -98,14 +100,30 @@ export const login = async (req, res) => {
 // *@route GET /api/auth/generate-otp
 // *@access public
 export const generateOtp = async (req, res) => {
-	res.json('generate otp route');
+	req.app.locals.OTP = await otpGenerator.generate(6, {
+		upperCaseAlphabets: false,
+		lowerCaseAlphabets: false,
+		specialChars: false,
+	});
+
+	res.status(201).json({ otpCode: req.app.locals.OTP });
 };
 
 // *@desc Verify the OTP
 // *@route /api/auth/verify-otp
 // *@access public
 export const verifyOtp = async (req, res) => {
-	res.json('verify otp route');
+	const { otpCode } = req.query;
+
+	if (parseInt(req.app.locals.OTP) === parseInt(otpCode)) {
+		res.status(201).json({ message: 'OTP verified successfully!' });
+
+		// !: Reset the OTP value && set the resetSession value to true
+		req.app.locals.OTP = null;
+		req.app.locals.resetSession = true;
+	}
+
+	res.status(400).json({ message: 'Invalid OTP.' });
 };
 
 // *@desc Redirect the user successfully when OTP is valid
