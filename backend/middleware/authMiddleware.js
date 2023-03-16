@@ -32,7 +32,7 @@ export const localVariables = (req, res, next) => {
 
 // ?: Check if the user is exist
 export const checkUser = async (req, res, next) => {
-	const { username } = req.query;
+	const { username } = req.method === 'GET' ? req.query : req.body;
 
 	const userExist = await User.findOne({ username })
 		.collation({ locale: 'en', strength: 2 })

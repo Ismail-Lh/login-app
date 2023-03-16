@@ -49,8 +49,8 @@ router.route('/verify-otp').get(checkUser, verifyOtp);
 router.route('/create-reset-session').get(createResetSession);
 
 // *@desc Reset the user password
-// *@route /api/auth/reset-password
+// *@route PATCH /api/auth/reset-password
 // *@access private
-router.route('/reset-password').put(resetPassword);
+router.route('/reset-password').patch(checkUser, resetPassword);
 
 export default router;

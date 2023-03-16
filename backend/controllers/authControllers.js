@@ -130,12 +130,30 @@ export const verifyOtp = async (req, res) => {
 // *@route /api/auth/create-reset-session
 // *@access public
 export const createResetSession = async (req, res) => {
-	res.json('createResetSession route');
+	if (req.app.locals.resetSession) {
+		req.app.locals.resetSession = false;
+		res.status(201).json({ message: 'Access granted!' });
+	}
+
+	res.status(440).json({ message: 'Session expired!' });
 };
 
 // *@desc Reset the user password
-// *@route /api/auth/reset-password
+// *@route PATCH /api/auth/reset-password
 // *@access private
 export const resetPassword = async (req, res) => {
-	res.json('ResetPassword route');
+	const { username, password } = req.body;
+
+	if (!req.app.locals.resetSession)
+		return res.status(440).json({ message: 'Session expired!' });
+
+	const user = await User.findOne({ username }).exec();
+
+	user.password = password;
+
+	await user.save();
+
+	req.app.locals.resetSession = false;
+
+	res.status(201).json({ message: `Password update successfully!` });
 };
