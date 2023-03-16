@@ -2,6 +2,8 @@ import otpGenerator from 'otp-generator';
 
 import User from '../models/User.js';
 import { accessToken } from '../helpers/generateToken.js';
+import { generateEmail } from '../helpers/generateEmail.js';
+import sendEmail from '../helpers/sendEmail.js';
 
 // *@desc User authentication
 // *@route POST /api/auth
@@ -58,7 +60,32 @@ export const register = async (req, res) => {
 // *@route POST /api/auth/register-mail
 // *@access PUBLIC
 export const registerMail = async (req, res) => {
-	res.json('register mail route');
+	const { username, userEmail, text, subject } = req.body;
+
+	const email = {
+		body: {
+			name: username,
+			intro:
+				text || "Welcome to ou login app! We're exited to have you on board.",
+			outro:
+				"Ned help, or have a question? Just reply to this email, we'd love to help.",
+		},
+	};
+
+	const emailBody = generateEmail.generate(email);
+
+	try {
+		await sendEmail({ userEmail, text, subject, emailBody });
+
+		res.status(200).json({
+			message:
+				'You should receive an email from us. Please check your email address!',
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: 'There was an error sending the email. Please try again later.',
+		});
+	}
 };
 
 // *@desc Login to a user account
@@ -127,8 +154,8 @@ export const verifyOtp = async (req, res) => {
 };
 
 // *@desc Redirect the user successfully when OTP is valid
-// *@route /api/auth/create-reset-session
-// *@access public
+// *@route GET /api/auth/create-reset-session
+// *@access private
 export const createResetSession = async (req, res) => {
 	if (req.app.locals.resetSession) {
 		req.app.locals.resetSession = false;
