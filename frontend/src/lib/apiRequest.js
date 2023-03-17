@@ -7,7 +7,13 @@ const API_URL = axios.create({
 });
 
 export const authentication = async username => {
-	return await API_URL.post('/auth', { username });
+	try {
+		const res = await API_URL.post('/auth', { username });
+
+		return res;
+	} catch (error) {
+		return error;
+	}
 };
 
 const sendEmail = async (username, userEmail, text, subject) => {

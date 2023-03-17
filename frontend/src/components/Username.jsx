@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { Toaster } from 'react-hot-toast';
@@ -6,15 +6,20 @@ import { Toaster } from 'react-hot-toast';
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
+
 import { getUser } from '../lib/apiRequest';
+import { useAuthStore } from '../store';
 
 const Username = () => {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
-	const { data, error } = useQuery({
-		queryKey: ['User'],
-		queryFn: () => getUser('ismail'),
-	});
+	const { setUsername } = useAuthStore(state => state);
+
+	// const { data, error } = useQuery({
+	// 	queryKey: ['User'],
+	// 	queryFn: () => getUser('ismail'),
+	// });
 
 	const formik = useFormik({
 		initialValues: {
@@ -24,7 +29,8 @@ const Username = () => {
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
-			console.log(values);
+			setUsername(values.username);
+			navigate('/password');
 		},
 	});
 

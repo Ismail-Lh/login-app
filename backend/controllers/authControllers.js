@@ -5,11 +5,6 @@ import { accessToken } from '../helpers/generateToken.js';
 import { generateEmail } from '../helpers/generateEmail.js';
 import sendEmail from '../helpers/sendEmail.js';
 
-// *@desc User authentication
-// *@route POST /api/auth
-// *@access public
-export const authentication = async (req, res) => res.end();
-
 // *@desc Create a new account
 // *@route POST /api/auth/register
 // *@access PUBLIC
