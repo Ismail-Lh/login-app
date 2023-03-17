@@ -16,7 +16,7 @@ const router = Router();
 // *@desc User authentication
 // *@route POST /api/auth
 // *@access public
-router.route('/').post(authentication);
+router.route('/').post(checkUser, authentication);
 
 // *@desc Create a new account
 // *@route POST /api/auth/register
@@ -39,12 +39,12 @@ router.route('/login').post(login);
 router.route('/generate-otp').get(checkUser, localVariables, generateOtp);
 
 // *@desc Verify the OTP
-// *@route /api/auth/verify-otp
+// *@route GET /api/auth/verify-otp
 // *@access public
 router.route('/verify-otp').get(checkUser, verifyOtp);
 
 // *@desc Reset all the variables
-// *@route /api/auth/create-reset-session
+// *@route GET /api/auth/create-reset-session
 // *@access public
 router.route('/create-reset-session').get(createResetSession);
 

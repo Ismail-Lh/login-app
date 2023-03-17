@@ -16,7 +16,7 @@ export const getUser = async (req, res) => {
 			message: 'No user found with this name. Please enter another username.',
 		});
 
-	res.status(201).json({ user });
+	res.status(201).json(user);
 };
 
 // *@desc Update the current user profile
@@ -24,8 +24,6 @@ export const getUser = async (req, res) => {
 // *@access PRIVATE
 export const updateCurrentUser = async (req, res) => {
 	const id = req.user._id;
-
-	console.log(req.user);
 
 	const { firstName, lastName, email, mobile, address, profile, username } =
 		req.body;

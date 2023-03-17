@@ -8,9 +8,7 @@ import sendEmail from '../helpers/sendEmail.js';
 // *@desc User authentication
 // *@route POST /api/auth
 // *@access public
-export const authentication = async (req, res) => {
-	res.json('authentication route');
-};
+export const authentication = async (req, res) => res.end();
 
 // *@desc Create a new account
 // *@route POST /api/auth/register
@@ -137,7 +135,7 @@ export const generateOtp = async (req, res) => {
 };
 
 // *@desc Verify the OTP
-// *@route /api/auth/verify-otp
+// *@route GET /api/auth/verify-otp
 // *@access public
 export const verifyOtp = async (req, res) => {
 	const { otpCode } = req.query;

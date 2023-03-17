@@ -7,9 +7,19 @@ import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
 import { convertToBase64 } from '../helpers/convert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { registerUser } from '../lib/apiRequest';
 
 const Register = () => {
+	// const queryClient = useQueryClient();
 	const [file, setFile] = useState();
+
+	// const RegisterUserMutation = useMutation('Users', {
+	// 	onSuccess: () => {
+	// 		// Invalidates cache and refetch
+	// 		queryClient.invalidateQueries('Users');
+	// 	},
+	// });
 
 	const formik = useFormik({
 		initialValues: {

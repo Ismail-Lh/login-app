@@ -1,12 +1,21 @@
 import { Link } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
+import { getUser } from '../lib/apiRequest';
 
 const Username = () => {
+	const queryClient = useQueryClient();
+
+	const { data, error } = useQuery({
+		queryKey: ['User'],
+		queryFn: () => getUser('ismail'),
+	});
+
 	const formik = useFormik({
 		initialValues: {
 			username: '',
