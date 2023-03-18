@@ -1,29 +1,38 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
-import { validateFields } from '../helpers/validate';
-import { convertToBase64 } from '../helpers/convert';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { registerUser } from '../lib/apiRequest';
 
+import { validateFields } from '../helpers/validate';
+import { convertToBase64 } from '../helpers/convert';
+
 const Register = () => {
-	// const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const [file, setFile] = useState();
 
-	// const RegisterUserMutation = useMutation('Users', {
-	// 	onSuccess: () => {
-	// 		// Invalidates cache and refetch
-	// 		queryClient.invalidateQueries('Users');
-	// 	},
-	// });
+	const {
+		mutate: newUser,
+		error,
+		isError,
+		isLoading,
+		isSuccess,
+	} = useMutation(registerUser, {
+		onSuccess: () => {
+			// Invalidates cache and refetch
+			queryClient.invalidateQueries('Users');
+		},
+	});
 
 	const formik = useFormik({
 		initialValues: {
-			username: '',
+			userName: '',
 			email: '',
 			password: '',
 		},
@@ -31,8 +40,19 @@ const Register = () => {
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
-			values = await Object.assign(values, { profile: file || '' });
-			console.log(values);
+			values = Object.assign(values, { profile: file || '' });
+			newUser(values);
+
+			if (isLoading) return toast.loading('Creating new user...');
+
+			if (!isLoading) {
+				isError && toast.error(<b>{error.response.data.message}</b>);
+
+				if (isSuccess) {
+					toast.success(<b>User register successfully!</b>);
+					navigate('/');
+				}
+			}
 		},
 	});
 
@@ -81,7 +101,7 @@ const Register = () => {
 								placeholder='Enter your email address'
 							/>
 							<input
-								{...formik.getFieldProps('username')}
+								{...formik.getFieldProps('userName')}
 								className={styles.textbox}
 								type='text'
 								placeholder='Enter your username'

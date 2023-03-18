@@ -25,7 +25,7 @@ export const isValidUser = async (req, res) => {
 // *@route POST /api/auth/register
 // *@access PUBLIC
 export const register = async (req, res) => {
-	const { username, email, password, profile } = req.body;
+	const { userName: username, email, password, profile } = req.body;
 
 	// !: Check for required fields
 	if (!username || !email || !password)
