@@ -6,13 +6,19 @@ const API_URL = axios.create({
 	baseURL: URL,
 });
 
-export const authentication = async username => {
+export const isValidUser = async username => {
+	let isExist;
 	try {
-		const res = await API_URL.post('/auth', { username });
+		const { data } = await API_URL.post('/auth', { username });
+		isExist = true;
 
-		return res;
+		return { data, isExist };
 	} catch (error) {
-		return error;
+		const errorCode = error.response.status;
+		const errorMessage = error.response.data.message;
+		isExist = false;
+
+		return { errorCode, errorMessage, isExist };
 	}
 };
 

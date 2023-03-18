@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
 	createResetSession,
 	generateOtp,
+	isValidUser,
 	login,
 	register,
 	registerMail,
@@ -15,7 +16,7 @@ const router = Router();
 // *@desc User authentication
 // *@route POST /api/auth
 // *@access public
-router.route('/').post(checkUser, (req, res) => res.end());
+router.route('/').post(isValidUser);
 
 // *@desc Create a new account
 // *@route POST /api/auth/register

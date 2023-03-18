@@ -5,6 +5,22 @@ import { accessToken } from '../helpers/generateToken.js';
 import { generateEmail } from '../helpers/generateEmail.js';
 import sendEmail from '../helpers/sendEmail.js';
 
+export const isValidUser = async (req, res) => {
+	const { username } = req.body;
+
+	const userExist = await User.findOne({ username })
+		.collation({ locale: 'en', strength: 2 })
+		.lean()
+		.exec();
+
+	if (!userExist)
+		res.status(404).json({
+			message: 'Unauthorized user, invalid username. Please try again.',
+		});
+
+	res.status(200).json({ message: 'Valid username, continue!' });
+};
+
 // *@desc Create a new account
 // *@route POST /api/auth/register
 // *@access PUBLIC

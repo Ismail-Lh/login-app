@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { authentication } from '../lib/apiRequest';
+import { isValidUser } from '../lib/apiRequest';
 
 const verifyFields = (errors = {}, values) => {
 	const fieldsName = Object.keys(values);
@@ -14,14 +14,10 @@ const verifyFields = (errors = {}, values) => {
 			return (errors[field] = toast.error(`Invalid ${field}!`));
 
 		if (field === 'username') {
-			const {
-				response: { status },
-			} = await authentication(values.username);
+			const res = await isValidUser(values.username);
 
-			if (status !== 200)
-				return (errors[field] = toast.error(
-					'Unauthorized user, invalid username. Please try again.'
-				));
+			if (res.errorCode && res.errorCode === 404)
+				return (errors[field] = toast.error(res.errorMessage));
 		}
 
 		if (field === 'password') {
