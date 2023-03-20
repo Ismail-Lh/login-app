@@ -46,7 +46,6 @@ const Register = () => {
 
 	useEffect(() => {
 		if (isSuccess) {
-			setUsername();
 			navigate('/');
 		}
 

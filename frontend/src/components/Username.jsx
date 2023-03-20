@@ -21,10 +21,8 @@ const Username = () => {
 		isError,
 		error,
 		isSuccess,
-	} = useMutation({
-		mutationKey: ['users'],
-		mutationFn: isValidUser,
-	});
+		isLoading,
+	} = useMutation(isValidUser);
 
 	const formik = useFormik({
 		initialValues: {
@@ -74,8 +72,8 @@ const Username = () => {
 								type='text'
 								placeholder='Username'
 							/>
-							<button type='submit' className={styles.btn}>
-								Let's Go
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Checking User...' : "Let's Go"}
 							</button>
 						</div>
 

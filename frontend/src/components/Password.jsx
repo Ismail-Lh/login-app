@@ -1,16 +1,17 @@
-import { Link, Navigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
 import { useAuthStore } from '../store';
-import { getUser } from '../lib/apiRequest';
+import { getUser, login } from '../lib/apiRequest';
+import { useEffect } from 'react';
 
 const Password = () => {
-	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	const { username } = useAuthStore(state => state.auth);
 
@@ -19,12 +20,15 @@ const Password = () => {
 		queryFn: () => getUser(username),
 	});
 
-	// const { mutate } = useMutation(login, {
-	// 	onSuccess: () => {
-	// 		// Invalidates cache and refetch
-	// 		queryClient.invalidateQueries('Users');
-	// 	},
-	// });
+	const {
+		mutate: loginUser,
+		isError,
+		isSuccess,
+		data,
+		isLoading,
+	} = useMutation({
+		mutationFn: login,
+	});
 
 	const formik = useFormik({
 		initialValues: {
@@ -34,9 +38,21 @@ const Password = () => {
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
-			console.log(values);
+			loginUser({ username, password: values.password });
 		},
 	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			const token = data.access_token;
+			localStorage.setItem('token', token);
+			navigate('/profile');
+		}
+
+		if (isError) {
+			toast.error(<b>Wrong password. Please enter the correct password.</b>);
+		}
+	}, [isSuccess, isError]);
 
 	return (
 		<div className='container mx-auto'>
@@ -69,8 +85,8 @@ const Password = () => {
 								type='password'
 								placeholder='Enter your password'
 							/>
-							<button type='submit' className={styles.btn}>
-								Sign In
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Sign In Loading...' : 'Sign In'}
 							</button>
 						</div>
 

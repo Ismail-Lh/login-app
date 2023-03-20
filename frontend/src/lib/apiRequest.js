@@ -57,7 +57,7 @@ export const login = async ({ username, password }) => {
 
 // ?: Update current login user account info
 export const updateCurrentUser = async user => {
-	const token = await localStorage.getItem('token');
+	const token = localStorage.getItem('token');
 
 	const {
 		data: { message },
