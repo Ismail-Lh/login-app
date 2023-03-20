@@ -14,9 +14,10 @@ const Password = () => {
 	const navigate = useNavigate();
 
 	const { username } = useAuthStore(state => state.auth);
+	const { setUser } = useAuthStore(state => state);
 
 	const { data: user } = useQuery({
-		queryKey: ['users', username],
+		queryKey: ['users'],
 		queryFn: () => getUser(username),
 	});
 
@@ -46,6 +47,9 @@ const Password = () => {
 		if (isSuccess) {
 			const token = data.access_token;
 			localStorage.setItem('token', token);
+
+			setUser(user);
+
 			navigate('/profile');
 		}
 

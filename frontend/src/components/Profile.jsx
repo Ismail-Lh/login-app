@@ -1,32 +1,70 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
+
 import { validateFields } from '../helpers/validate';
 import { convertToBase64 } from '../helpers/convert';
 
+import { useAuthStore } from '../store';
+import { updateCurrentUser } from '../lib/apiRequest';
+
 const Profile = () => {
+	const queryClient = useQueryClient();
+
 	const [file, setFile] = useState();
+
+	const {
+		auth: { user },
+		setUser,
+	} = useAuthStore(state => state);
+
+	const {
+		mutate: updateUser,
+		isLoading,
+		isSuccess,
+		isError,
+		error,
+		data,
+	} = useMutation({
+		mutationFn: updateCurrentUser,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['users']);
+		},
+	});
 
 	const formik = useFormik({
 		initialValues: {
-			firsName: 'ismail',
-			lastName: 'lahbiyeb',
-			mobile: '0666554433',
-			address: 'USA',
-			email: '',
+			firstName: user?.firstName || '',
+			lastName: user?.lastName || '',
+			mobile: user?.mobile || '',
+			address: user?.address || '',
+			email: user?.email || '',
 		},
+		enableReinitialize: true,
 		validate: validateFields,
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
-			values = await Object.assign(values, { profile: file || '' });
-			console.log(values);
+			values = Object.assign(values, { profile: file || user?.profile || '' });
+
+			updateUser(values);
 		},
 	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			setUser(data.user);
+		}
+
+		if (isError) {
+			toast.error(error.response.data.message);
+		}
+	}, [isSuccess, isError]);
 
 	const handleUpload = async e => {
 		const base64 = await convertToBase64(e.target.files[0]);
@@ -50,7 +88,7 @@ const Profile = () => {
 						<div className='profile flex justify-center py-4'>
 							<label htmlFor='profile'>
 								<img
-									src={file || avatar}
+									src={user.profile || file || avatar}
 									className={styles.profile_img}
 									alt='avatar'
 								/>
@@ -68,7 +106,7 @@ const Profile = () => {
 						<div className='textbox flex flex-col items-center gap-6'>
 							<div className='name flex w-3/4 gap-10'>
 								<input
-									{...formik.getFieldProps('firsName')}
+									{...formik.getFieldProps('firstName')}
 									className={styles.textbox}
 									type='text'
 									placeholder='FirstName'
@@ -101,8 +139,8 @@ const Profile = () => {
 								placeholder='Address'
 							/>
 
-							<button type='submit' className={styles.btn}>
-								Update
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Updating user...' : 'Update'}
 							</button>
 						</div>
 

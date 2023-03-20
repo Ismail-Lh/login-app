@@ -7,7 +7,8 @@ const verifyFields = (errors = {}, values) => {
 	const fieldsName = Object.keys(values);
 
 	fieldsName.forEach(async field => {
-		if (field === 'profile') return;
+		if (field !== 'username' || field !== 'email' || field !== 'password')
+			return;
 
 		if (!values[field])
 			return (errors[field] = toast.error(`${field} required...!`));

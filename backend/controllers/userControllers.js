@@ -57,12 +57,14 @@ export const updateCurrentUser = async (req, res) => {
 		emailExistPromise,
 	]);
 
-	if (
-		(usernameExist && usernameExist?._id.toString() !== id) ||
-		(emailExist && emailExist?._id.toString() !== id)
-	)
+	if (usernameExist && usernameExist?._id.toString() !== id)
 		return res.status(409).json({
-			message: 'User already exist! Please try again!',
+			message: 'Username already used! Please try another username!',
+		});
+
+	if (emailExist && emailExist?._id.toString() !== id)
+		return res.status(409).json({
+			message: 'Email address already used! Please try another email address!',
 		});
 
 	user.username = username || user.username;
@@ -75,5 +77,5 @@ export const updateCurrentUser = async (req, res) => {
 
 	await user.save();
 
-	res.status(201).json({ message: 'User updated successfully!' });
+	res.status(201).json({ message: 'User updated successfully!', user });
 };

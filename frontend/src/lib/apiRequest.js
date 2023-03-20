@@ -59,13 +59,11 @@ export const login = async ({ username, password }) => {
 export const updateCurrentUser = async user => {
 	const token = localStorage.getItem('token');
 
-	const {
-		data: { message },
-	} = await API_URL.patch(`/users/update-current-user`, user, {
-		headers: { Authorization: `Bearer ${token}` },
+	const { data } = await API_URL.patch('/users/update-current-user', user, {
+		headers: { authorization: `Bearer ${token}` },
 	});
 
-	return message;
+	return data;
 };
 
 // ?: Generate a 6 digit OTP code
