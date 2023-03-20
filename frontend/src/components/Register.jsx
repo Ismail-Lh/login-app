@@ -1,16 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
 import { toast, Toaster } from 'react-hot-toast';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 
 import { registerUser } from '../lib/apiRequest';
-
-import { validateFields } from '../helpers/validate';
 import { convertToBase64 } from '../helpers/convert';
+import { validateFields } from '../helpers/validate';
+import { useFormik } from 'formik';
 
 const Register = () => {
 	const queryClient = useQueryClient();
@@ -18,15 +17,14 @@ const Register = () => {
 	const [file, setFile] = useState();
 
 	const {
-		mutate: newUser,
-		error,
+		mutate: createNewUser,
 		isError,
-		isLoading,
+		error,
 		isSuccess,
-	} = useMutation(registerUser, {
+	} = useMutation({
+		mutationFn: registerUser,
 		onSuccess: () => {
-			// Invalidates cache and refetch
-			queryClient.invalidateQueries('Users');
+			queryClient.invalidateQueries(['users'], { exact: true });
 		},
 	});
 
@@ -41,20 +39,21 @@ const Register = () => {
 		validateOnChange: false,
 		onSubmit: async values => {
 			values = Object.assign(values, { profile: file || '' });
-			newUser(values);
 
-			if (isLoading) return toast.loading('Creating new user...');
-
-			if (!isLoading) {
-				isError && toast.error(<b>{error.response.data.message}</b>);
-
-				if (isSuccess) {
-					toast.success(<b>User register successfully!</b>);
-					navigate('/');
-				}
-			}
+			createNewUser(values);
 		},
 	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			setUsername();
+			navigate('/');
+		}
+
+		if (isError) {
+			toast.error(error?.response.data.message);
+		}
+	}, [isSuccess, isError]);
 
 	const handleUpload = async e => {
 		const base64 = await convertToBase64(e.target.files[0]);
@@ -100,6 +99,7 @@ const Register = () => {
 								type='text'
 								placeholder='Enter your email address'
 							/>
+
 							<input
 								{...formik.getFieldProps('userName')}
 								className={styles.textbox}
@@ -112,6 +112,7 @@ const Register = () => {
 								type='password'
 								placeholder='Enter your password'
 							/>
+
 							<button type='submit' className={styles.btn}>
 								Register
 							</button>

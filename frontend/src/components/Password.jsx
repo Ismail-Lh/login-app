@@ -14,13 +14,8 @@ const Password = () => {
 
 	const { username } = useAuthStore(state => state.auth);
 
-	const {
-		data: user,
-		isError,
-		isLoading,
-		error,
-	} = useQuery({
-		queryKey: ['Users', username],
+	const { data: user } = useQuery({
+		queryKey: ['users', username],
 		queryFn: () => getUser(username),
 	});
 
@@ -42,22 +37,6 @@ const Password = () => {
 			console.log(values);
 		},
 	});
-
-	if (isLoading)
-		return (
-			<div className='flex justify-center items-center h-screen'>
-				<h1 className='text-2xl font-bold'>Loading...</h1>
-			</div>
-		);
-
-	if (isError)
-		return (
-			<div className='flex justify-center items-center h-screen'>
-				<h1 className='text-2xl font-bold text-red-500'>
-					{error?.response.data.message}
-				</h1>
-			</div>
-		);
 
 	return (
 		<div className='container mx-auto'>

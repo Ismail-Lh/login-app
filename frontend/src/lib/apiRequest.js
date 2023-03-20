@@ -7,19 +7,9 @@ const API_URL = axios.create({
 });
 
 export const isValidUser = async username => {
-	let isExist;
-	try {
-		const { data } = await API_URL.post('/auth', { username });
-		isExist = true;
+	const { data } = await API_URL.post('/auth', { username });
 
-		return { data, isExist };
-	} catch (error) {
-		const errorCode = error.response.status;
-		const errorMessage = error.response.data.message;
-		isExist = false;
-
-		return { errorCode, errorMessage, isExist };
-	}
+	return data;
 };
 
 const sendEmail = async (username, userEmail, text, subject) => {
@@ -49,11 +39,11 @@ export const registerUser = async user => {
 		status,
 	} = await API_URL.post(`/auth/register`, user);
 
-	const { username, email } = user;
+	// const { username, email } = user;
 
-	if (status === 201) {
-		await sendEmail(username, email, message);
-	}
+	// if (status === 201) {
+	// 	await sendEmail(username, email, message);
+	// }
 
 	return message;
 };

@@ -1,10 +1,10 @@
 import toast from 'react-hot-toast';
-import { isValidUser } from '../lib/apiRequest';
+
+const pswRegExp = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 const verifyFields = (errors = {}, values) => {
 	const fieldsName = Object.keys(values);
-	const pswRegExp = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-	const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 	fieldsName.forEach(async field => {
 		if (field === 'profile') return;
@@ -14,13 +14,6 @@ const verifyFields = (errors = {}, values) => {
 
 		if (values[field].includes(' '))
 			return (errors[field] = toast.error(`Invalid ${field}!`));
-
-		if (field === 'username') {
-			const res = await isValidUser(values.username);
-
-			if (res.errorCode && res.errorCode === 404)
-				return (errors[field] = toast.error(res.errorMessage));
-		}
 
 		if (field === 'password') {
 			if (values.password.length < 4)

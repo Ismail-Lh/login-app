@@ -14,7 +14,7 @@ export const isValidUser = async (req, res) => {
 		.exec();
 
 	if (!userExist)
-		res.status(404).json({
+		return res.status(404).json({
 			message: 'Unauthorized user, invalid username. Please try again.',
 		});
 
@@ -55,14 +55,12 @@ export const register = async (req, res) => {
 	// ?: Create a new user
 	const newUser = await User.create({ username, password, email, profile });
 
-	if (newUser)
-		return res
-			.status(201)
-			.json({ message: `New user ${newUser.username} created!` });
+	if (!newUser)
+		res
+			.status(400)
+			.json({ message: 'Invalid user data received. Please try again.' });
 
-	res
-		.status(400)
-		.json({ message: 'Invalid user data received. Please try again.' });
+	res.status(201).json({ message: `New user ${newUser.username} created!` });
 };
 
 // *@desc Send the email
