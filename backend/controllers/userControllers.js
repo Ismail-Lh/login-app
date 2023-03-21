@@ -73,7 +73,7 @@ export const updateCurrentUser = async (req, res) => {
 	user.firstName = firstName || user.firstName;
 	user.mobile = mobile || user.mobile;
 	user.address = address || user.address;
-	user.profile = profile || user.profile;
+	user.profile = user.profile === profile ? user.profile : profile;
 
 	await user.save();
 

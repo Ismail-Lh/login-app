@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -23,17 +23,16 @@ const Profile = () => {
 		setUser,
 	} = useAuthStore(state => state);
 
-	const {
-		mutate: updateUser,
-		isLoading,
-		isSuccess,
-		isError,
-		error,
-		data,
-	} = useMutation({
+	console.log(user);
+
+	const { mutate: updateUser, isLoading } = useMutation({
 		mutationFn: updateCurrentUser,
-		onSuccess: () => {
+		onSuccess: data => {
 			queryClient.invalidateQueries(['users']);
+			setUser(data.user);
+		},
+		onError: error => {
+			toast.error(<b>{error?.response.data.message}</b>);
 		},
 	});
 
@@ -55,16 +54,6 @@ const Profile = () => {
 			updateUser(values);
 		},
 	});
-
-	useEffect(() => {
-		if (isSuccess) {
-			setUser(data.user);
-		}
-
-		if (isError) {
-			toast.error(error.response.data.message);
-		}
-	}, [isSuccess, isError]);
 
 	const handleUpload = async e => {
 		const base64 = await convertToBase64(e.target.files[0]);
@@ -88,7 +77,7 @@ const Profile = () => {
 						<div className='profile flex justify-center py-4'>
 							<label htmlFor='profile'>
 								<img
-									src={user.profile || file || avatar}
+									src={user?.profile || file || avatar}
 									className={styles.profile_img}
 									alt='avatar'
 								/>

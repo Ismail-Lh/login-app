@@ -8,7 +8,6 @@ import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
 import { useAuthStore } from '../store';
 import { getUser, login } from '../lib/apiRequest';
-import { useEffect } from 'react';
 
 const Password = () => {
 	const navigate = useNavigate();
@@ -21,14 +20,16 @@ const Password = () => {
 		queryFn: () => getUser(username),
 	});
 
-	const {
-		mutate: loginUser,
-		isError,
-		isSuccess,
-		data,
-		isLoading,
-	} = useMutation({
-		mutationFn: login,
+	const { mutate: loginUser, isLoading } = useMutation(login, {
+		onSuccess: data => {
+			const token = data.access_token;
+			localStorage.setItem('token', token);
+			setUser(user);
+			navigate('/profile');
+		},
+		onError: error => {
+			toast.error(<b>{error?.response.data.message}</b>);
+		},
 	});
 
 	const formik = useFormik({
@@ -42,21 +43,6 @@ const Password = () => {
 			loginUser({ username, password: values.password });
 		},
 	});
-
-	useEffect(() => {
-		if (isSuccess) {
-			const token = data.access_token;
-			localStorage.setItem('token', token);
-
-			setUser(user);
-
-			navigate('/profile');
-		}
-
-		if (isError) {
-			toast.error(<b>Wrong password. Please enter the correct password.</b>);
-		}
-	}, [isSuccess, isError]);
 
 	return (
 		<div className='container mx-auto'>

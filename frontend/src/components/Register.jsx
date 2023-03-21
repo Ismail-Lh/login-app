@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useFormik } from 'formik';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
@@ -9,22 +10,21 @@ import avatar from '../assets/profile.png';
 import { registerUser } from '../lib/apiRequest';
 import { convertToBase64 } from '../helpers/convert';
 import { validateFields } from '../helpers/validate';
-import { useFormik } from 'formik';
 
 const Register = () => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+
 	const [file, setFile] = useState();
 
-	const {
-		mutate: createNewUser,
-		isError,
-		error,
-		isSuccess,
-	} = useMutation({
+	const { mutate: createNewUser, isLoading } = useMutation({
 		mutationFn: registerUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries(['users'], { exact: true });
+			navigate('/');
+		},
+		onError: error => {
+			toast.error(error?.response.data.message);
 		},
 	});
 
@@ -43,16 +43,6 @@ const Register = () => {
 			createNewUser(values);
 		},
 	});
-
-	useEffect(() => {
-		if (isSuccess) {
-			navigate('/');
-		}
-
-		if (isError) {
-			toast.error(error?.response.data.message);
-		}
-	}, [isSuccess, isError]);
 
 	const handleUpload = async e => {
 		const base64 = await convertToBase64(e.target.files[0]);
@@ -112,8 +102,8 @@ const Register = () => {
 								placeholder='Enter your password'
 							/>
 
-							<button type='submit' className={styles.btn}>
-								Register
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Registering user...' : 'Register'}
 							</button>
 						</div>
 

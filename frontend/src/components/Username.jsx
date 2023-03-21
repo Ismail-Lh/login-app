@@ -1,28 +1,29 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
 import { Toaster, toast } from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query';
+import { useFormik } from 'formik';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
 
 import { useAuthStore } from '../store';
-import { useMutation } from '@tanstack/react-query';
 import { isValidUser } from '../lib/apiRequest';
-import { useEffect } from 'react';
 
 const Username = () => {
 	const navigate = useNavigate();
 
 	const { setUsername } = useAuthStore(state => state);
 
-	const {
-		mutate: isUserExist,
-		isError,
-		error,
-		isSuccess,
-		isLoading,
-	} = useMutation(isValidUser);
+	const { mutate: isUserExist, isLoading } = useMutation(isValidUser, {
+		onSuccess: () => {
+			setUsername(formik.values.username);
+			navigate('/password');
+		},
+		onError: error => {
+			toast.error(<b>{error?.response.data.message}</b>);
+		},
+	});
 
 	const formik = useFormik({
 		initialValues: {
@@ -35,17 +36,6 @@ const Username = () => {
 			isUserExist(values.username);
 		},
 	});
-
-	useEffect(() => {
-		if (isSuccess) {
-			setUsername(formik.values.username);
-			navigate('/password');
-		}
-
-		if (isError) {
-			toast.error(<b>{error?.response.data.message}</b>);
-		}
-	}, [isError, isSuccess]);
 
 	return (
 		<div className='container mx-auto'>
