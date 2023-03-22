@@ -23,7 +23,7 @@ export const getUser = async (req, res) => {
 // *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
 export const updateCurrentUser = async (req, res) => {
-	const id = req.user._id;
+	const id = req.userId;
 
 	const { firstName, lastName, email, mobile, address, profile, username } =
 		req.body;

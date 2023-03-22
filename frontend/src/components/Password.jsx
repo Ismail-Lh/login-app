@@ -13,7 +13,7 @@ const Password = () => {
 	const navigate = useNavigate();
 
 	const { username } = useAuthStore(state => state.auth);
-	const { setUser } = useAuthStore(state => state);
+	const { setUser, setToken } = useAuthStore(state => state);
 
 	const { data: user } = useQuery({
 		queryKey: ['users'],
@@ -21,10 +21,9 @@ const Password = () => {
 	});
 
 	const { mutate: loginUser, isLoading } = useMutation(login, {
-		onSuccess: data => {
-			const token = data.access_token;
-			localStorage.setItem('token', token);
+		onSuccess: ({ access_token }) => {
 			setUser(user);
+			setToken(access_token);
 			navigate('/profile');
 		},
 		onError: error => {

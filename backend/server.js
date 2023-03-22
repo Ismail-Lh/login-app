@@ -2,6 +2,7 @@ import 'express-async-errors';
 import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
@@ -25,9 +26,10 @@ const NODE_ENV = process.env.NODE_ENV;
 // ?: GLOBAL MIDDLEWARE
 app.use(loggerMiddleware);
 
+app.use(cookieParser());
+app.use(express.json({ limit: '50mb' }));
 app.use(helmet());
 app.use(compression());
-app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 app.use(morgan('tiny'));
 app.disable('x-powered-by');

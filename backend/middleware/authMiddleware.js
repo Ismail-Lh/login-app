@@ -13,9 +13,13 @@ export const protectedRoute = async (req, res, next) => {
 
 	const token = authHeaders.split(' ')[1];
 
-	const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+	console.log(token);
 
-	req.user = decodedToken.user;
+	const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+	req.username = decodedToken.username;
+	req.email = decodedToken.email;
+	req.userId = decodedToken.userId;
 
 	next();
 };

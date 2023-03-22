@@ -121,7 +121,19 @@ export const login = async (req, res) => {
 	user.password = undefined;
 
 	// ?: Create an accessToken
-	const access_token = accessToken(user);
+	const access_token = accessToken({
+		username: user.username,
+		email: user.email,
+		userId: user._id,
+	});
+
+	// ?: Create secure cookie
+	res.cookie('token', access_token, {
+		httpOnly: true, //accessible only by web server
+		// secure: true, //https
+		// sameSite: 'None', //cross-site cookie
+		// maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
+	});
 
 	res.status(200).json({
 		message: 'Login successfully...',

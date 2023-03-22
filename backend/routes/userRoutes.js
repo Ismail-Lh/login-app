@@ -13,5 +13,6 @@ router.route('/:username').get(getUser);
 // *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
 router.route('/update-current-user').patch(protectedRoute, updateCurrentUser);
+// router.route('/update-current-user').patch(updateCurrentUser);
 
 export default router;
