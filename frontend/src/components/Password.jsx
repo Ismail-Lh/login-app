@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { toast, Toaster } from 'react-hot-toast';
@@ -13,7 +13,7 @@ const Password = () => {
 	const navigate = useNavigate();
 
 	const { username } = useAuthStore(state => state.auth);
-	const { setUser, setToken } = useAuthStore(state => state);
+	const { setUser } = useAuthStore(state => state);
 
 	const { data: user } = useQuery({
 		queryKey: ['users'],
@@ -23,7 +23,7 @@ const Password = () => {
 	const { mutate: loginUser, isLoading } = useMutation(login, {
 		onSuccess: ({ access_token }) => {
 			setUser(user);
-			setToken(access_token);
+			localStorage.setItem('token', access_token);
 			navigate('/profile');
 		},
 		onError: error => {

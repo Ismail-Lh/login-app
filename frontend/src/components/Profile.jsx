@@ -23,7 +23,6 @@ const Profile = () => {
 	const {
 		auth: { user, token },
 		setUser,
-		resetStore,
 	} = useAuthStore(state => state);
 
 	const { mutate: updateUser, isLoading } = useMutation({
@@ -42,7 +41,7 @@ const Profile = () => {
 		mutationFn: logout,
 		onSuccess: () => {
 			queryClient.invalidateQueries(['users']);
-			localStorage.removeItem('auth-storage');
+			localStorage.removeItem('token');
 			navigate('/');
 		},
 		onError: error => {
