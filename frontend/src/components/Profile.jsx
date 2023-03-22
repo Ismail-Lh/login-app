@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -11,16 +11,19 @@ import { validateFields } from '../helpers/validate';
 import { convertToBase64 } from '../helpers/convert';
 
 import { useAuthStore } from '../store';
-import { updateCurrentUser } from '../lib/apiRequest';
+import { logout, updateCurrentUser } from '../lib/apiRequest';
 
 const Profile = () => {
 	const queryClient = useQueryClient();
+
+	const navigate = useNavigate();
 
 	const [file, setFile] = useState();
 
 	const {
 		auth: { user, token },
 		setUser,
+		resetStore,
 	} = useAuthStore(state => state);
 
 	const { mutate: updateUser, isLoading } = useMutation({
@@ -29,6 +32,18 @@ const Profile = () => {
 			setUser(data.user);
 			toast.success(<b>{data.message}</b>);
 			queryClient.invalidateQueries(['users']);
+		},
+		onError: error => {
+			toast.error(<b>{error?.response.data.message}</b>);
+		},
+	});
+
+	const { mutate: logoutUser } = useMutation({
+		mutationFn: logout,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['users']);
+			localStorage.removeItem('auth-storage');
+			navigate('/');
 		},
 		onError: error => {
 			toast.error(<b>{error?.response.data.message}</b>);
@@ -135,9 +150,12 @@ const Profile = () => {
 						<div className='text-center py-4'>
 							<span className='text-gray-500'>
 								Come back later.{' '}
-								<Link className='text-red-500' to='/'>
+								<button
+									type='button'
+									className='text-red-500'
+									onClick={logoutUser}>
 									Logout!
-								</Link>
+								</button>
 							</span>
 						</div>
 					</form>

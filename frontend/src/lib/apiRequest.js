@@ -55,6 +55,13 @@ export const login = async ({ username, password }) => {
 	return data;
 };
 
+// ?: Login to a user account
+export const logout = async () => {
+	const { data } = await API_URL.post(`/auth/logout`);
+
+	return data;
+};
+
 // ?: Update current login user account info
 export const updateCurrentUser = async ({ values: user, token }) => {
 	const { data } = await API_URL.patch('/users/update-current-user', user, {

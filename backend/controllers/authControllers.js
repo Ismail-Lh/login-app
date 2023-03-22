@@ -128,18 +128,34 @@ export const login = async (req, res) => {
 	});
 
 	// ?: Create secure cookie
-	res.cookie('token', access_token, {
-		httpOnly: true, //accessible only by web server
-		// secure: true, //https
-		// sameSite: 'None', //cross-site cookie
-		// maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
-	});
+	res
+		.cookie('token', access_token, {
+			httpOnly: true, //accessible only by web server
+			secure: process.env.NODE_ENV === 'production',
+			// sameSite: 'None', //cross-site cookie
+			// maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
+		})
+		.status(200)
+		.json({
+			message: 'Login successfully...',
+			username: user.username,
+			access_token,
+		});
+};
 
-	res.status(200).json({
-		message: 'Login successfully...',
-		username: user.username,
-		access_token,
-	});
+// *@desc Logout a user (Clear the JWT cookies if exists)
+// *@route POST /api/auth/logout
+// *@access private
+export const logout = (req, res) => {
+	const cookies = req.cookies;
+
+	// !: Check if the JWT cookie exists
+	if (!cookies?.jwt) res.sendStatus(204);
+
+	// !: Clear the JWT cookie
+	res.clearCookie('jwt', { sameSite: 'None', httpOnly: true, secure: true });
+
+	res.json({ message: 'Cookies cleared.' });
 };
 
 // *@desc Generate a 6 digit OTP

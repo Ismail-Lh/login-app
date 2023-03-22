@@ -15,6 +15,7 @@ import userRoutes from './routes/userRoutes.js';
 
 import loggerMiddleware from './middleware/loggerMiddleware.js';
 import errorMiddleware from './middleware/errorMiddleware.js';
+import corsOptions from './config/corsOptions.js';
 
 // ?: CONFIGURATION
 dotenv.config();
@@ -30,7 +31,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 app.use(helmet());
 app.use(compression());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('tiny'));
 app.disable('x-powered-by');
 

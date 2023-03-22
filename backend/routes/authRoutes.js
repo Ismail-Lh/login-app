@@ -4,6 +4,7 @@ import {
 	generateOtp,
 	isValidUser,
 	login,
+	logout,
 	register,
 	registerMail,
 	resetPassword,
@@ -32,6 +33,11 @@ router.route('/register-mail').post(registerMail);
 // *@route POST /api/auth/login
 // *@access PUBLIC
 router.route('/login').post(login);
+
+// *@desc Login to a user account
+// *@route POST /api/auth/logout
+// *@access PUBLIC
+router.route('/logout').post(logout);
 
 // *@desc Generate a 6 digit OTP
 // *@route GET /api/auth/generate-otp
