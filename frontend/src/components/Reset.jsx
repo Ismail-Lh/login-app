@@ -1,11 +1,39 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 import { validateFields } from '../helpers/validate';
+import { createResetSession, resetPassword } from '../lib/apiRequest';
+import { useAuthStore } from '../store';
 
 import styles from '../styles/Username.module.css';
 
 const Reset = () => {
+	const navigate = useNavigate();
+
+	const { username } = useAuthStore(state => state.auth);
+
+	const resetQuery = useQuery({
+		queryKey: ['Reset'],
+		queryFn: createResetSession,
+		onError: error => {
+			toast.error(error?.response.data.message);
+		},
+		refetchOnWindowFocus: false,
+	});
+
+	const { mutate: resetPasswordMutation, isLoading } = useMutation({
+		mutationFn: resetPassword,
+		onSuccess: data => {
+			toast.success(data?.data.message);
+			navigate('/');
+		},
+		onError: error => {
+			toast.error(error?.response.data.message);
+		},
+	});
+
 	const formik = useFormik({
 		initialValues: {
 			password: '',
@@ -15,9 +43,11 @@ const Reset = () => {
 		validateOnBlur: false,
 		validateOnChange: false,
 		onSubmit: async values => {
-			console.log(values);
+			resetPasswordMutation({ password: values.password, username });
 		},
 	});
+
+	// if (status && status !== 201) return <Navigate to='/password' replace />;
 
 	return (
 		<div className='container mx-auto'>
@@ -36,18 +66,18 @@ const Reset = () => {
 							<input
 								{...formik.getFieldProps('password')}
 								className={styles.textbox}
-								type='password'
+								type='text'
 								placeholder='Enter new password'
 							/>
 							<input
 								{...formik.getFieldProps('confirmPassword')}
 								className={styles.textbox}
-								type='password'
+								type='text'
 								placeholder='Confirm password'
 							/>
 
-							<button type='submit' className={styles.btn}>
-								Reset Password
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Password resetting...' : 'Reset Password'}
 							</button>
 						</div>
 					</form>

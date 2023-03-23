@@ -190,11 +190,10 @@ export const verifyOtp = async (req, res) => {
 
 // *@desc Redirect the user successfully when OTP is valid
 // *@route GET /api/auth/create-reset-session
-// *@access private
+// *@access public
 export const createResetSession = async (req, res) => {
 	if (req.app.locals.resetSession) {
-		req.app.locals.resetSession = false;
-		res.status(201).json({ message: 'Access granted!' });
+		res.status(201).json({ flag: req.app.locals.resetSession });
 	}
 
 	res.status(440).json({ message: 'Session expired!' });

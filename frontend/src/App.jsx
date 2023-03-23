@@ -30,8 +30,22 @@ const router = createBrowserRouter([
 			</RequireAuth>
 		),
 	},
-	{ path: '/reset', element: <Reset /> },
-	{ path: '/recovery', element: <Recovery /> },
+	{
+		path: '/reset',
+		element: (
+			<ProtectedRoute>
+				<Reset />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/recovery',
+		element: (
+			<ProtectedRoute>
+				<Recovery />
+			</ProtectedRoute>
+		),
+	},
 	{ path: '*', element: <PageNotFound /> },
 ]);
 

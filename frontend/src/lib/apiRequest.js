@@ -13,16 +13,12 @@ export const isValidUser = async username => {
 };
 
 const sendEmail = async (username, userEmail, text, subject) => {
-	try {
-		await API_URL.post('/auth/register-mail', {
-			username,
-			userEmail,
-			text,
-			subject,
-		});
-	} catch (error) {
-		console.log(error);
-	}
+	return await API_URL.post('/auth/register-mail', {
+		username,
+		userEmail,
+		text,
+		subject,
+	});
 };
 
 // ?: Get an user with his name
@@ -39,11 +35,11 @@ export const registerUser = async user => {
 		status,
 	} = await API_URL.post(`/auth/register`, user);
 
-	// const { username, email } = user;
+	const { username, email } = user;
 
-	// if (status === 201) {
-	// 	await sendEmail(username, email, message);
-	// }
+	if (status === 201) {
+		await sendEmail(username, email, message);
+	}
 
 	return message;
 };
@@ -82,9 +78,7 @@ export const generateOtp = async username => {
 
 	// ?: Send the OTP to the user email
 	if (status === 201) {
-		const {
-			data: { email },
-		} = await getUser(username);
+		const { email } = await getUser(username);
 
 		const text = `Your password recovery OTP code is ${otpCode}. Verify an recover your password.`;
 
@@ -111,6 +105,13 @@ export const resetPassword = async ({ username, password }) => {
 		username,
 		password,
 	});
+
+	return { data, status };
+};
+
+// ?:Create a user session
+export const createResetSession = async () => {
+	const { data, status } = await API_URL.get('/auth/create-reset-session');
 
 	return { data, status };
 };

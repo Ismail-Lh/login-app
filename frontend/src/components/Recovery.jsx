@@ -13,33 +13,40 @@ const Recovery = () => {
 
 	const [code, setCode] = useState();
 
-	const { data: otpCode } = useQuery({
-		queryKey: ['OTP'],
+	const { isLoading } = useQuery({
+		queryKey: ['OTP', username],
 		queryFn: () => generateOtp(username),
 		onSuccess: () => {
 			toast.success(<b>OTP has been send to your email address.</b>);
 		},
 		onError: error => {
-			toast.error(<b>{error?.response.data.message}</b>);
+			toast.error(<b>{error?.response?.data?.message}</b>);
 		},
+		refetchOnWindowFocus: false,
 	});
 
-	const verifyOtpQuery = useQuery({
-		queryKey: ['OTP'],
-		queryFn: verifyOtp,
-		onSuccess: () => {
-			toast.success(<b>OTP verify successfully!</b>);
-			navigate('/reset');
-		},
-		onError: error => {
-			toast.error(<b>{error?.response.data.message}</b>);
-		},
-	});
-
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
+		try {
+			let { status, data } = await verifyOtp({ username, otpCode: code });
 
-		verifyOtpQuery.query({ username, otpCode: code });
+			if (status === 201) {
+				navigate('/reset');
+				toast.success(data?.message);
+			}
+		} catch (error) {
+			return toast.error('Wrong OTP! Check email again!');
+		}
+	};
+
+	const resendOtp = () => {
+		let sentPromise = generateOtp(username);
+
+		toast.promise(sentPromise, {
+			loading: 'Sending...',
+			success: <b>OTP has been send to your email!</b>,
+			error: <b>Could not Send it!</b>,
+		});
 	};
 
 	return (
@@ -68,18 +75,22 @@ const Recovery = () => {
 									onChange={e => setCode(e.target.value)}
 								/>
 							</div>
-							<button type='submit' className={styles.btn}>
-								Sign In
+							<button type='submit' className={styles.btn} disabled={isLoading}>
+								{isLoading ? 'Generating OTP...' : 'Recover'}
 							</button>
 						</div>
-
-						<div className='text-center py-4'>
-							<span className='text-gray-500'>
-								Can't get OTP?
-								<button className='text-red-500 mx-4'>Resend</button>
-							</span>
-						</div>
 					</form>
+					<div className='text-center py-4'>
+						<span className='text-gray-500'>
+							Can't get OTP?
+							<button
+								className='text-red-500 mx-4'
+								onClick={() => resendOtp()}
+								type='button'>
+								Resend
+							</button>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
