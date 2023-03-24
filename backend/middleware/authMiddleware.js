@@ -36,15 +36,18 @@ export const localVariables = (req, res, next) => {
 export const checkUser = async (req, res, next) => {
 	const { username } = req.method === 'GET' ? req.query : req.body;
 
-	const userExist = await User.findOne({ username })
+	const user = await User.findOne({ username })
+		.select('-password')
 		.collation({ locale: 'en', strength: 2 })
 		.lean()
 		.exec();
 
-	if (!userExist)
+	if (!user)
 		res.status(404).json({
 			message: 'Unauthorized user, invalid username. Please try again.',
 		});
+
+	req.user = user;
 
 	next();
 };

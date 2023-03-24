@@ -7,9 +7,9 @@ const API_URL = axios.create({
 });
 
 export const isValidUser = async username => {
-	const { data } = await API_URL.post('/auth', { username });
+	const { data, status } = await API_URL.post('/auth', { username });
 
-	return data;
+	return { data, status };
 };
 
 const sendEmail = async (username, userEmail, text, subject) => {
@@ -24,6 +24,8 @@ const sendEmail = async (username, userEmail, text, subject) => {
 // ?: Get an user with his name
 export const getUser = async username => {
 	const { data } = await API_URL.get(`/users/${username}`);
+
+	console.log(data);
 
 	return data;
 };

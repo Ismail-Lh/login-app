@@ -1,12 +1,13 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import Register from './components/Register';
-import Username from './components/Username';
-import Password from './components/Password';
-import PageNotFound from './components/PageNotFound';
-import Profile from './components/Profile';
-import Recovery from './components/Recovery';
-import Reset from './components/Reset';
+import Register from './pages/Register';
+import Username from './pages/Username';
+import Password from './pages/Password';
+import PageNotFound from './pages/PageNotFound';
+import Profile from './pages/Profile';
+import Recovery from './pages/Recovery';
+import Reset from './pages/Reset';
+
 import ProtectedRoute from './HOC/ProtectedRoute';
 import RequireAuth from './HOC/RequireAuth';
 

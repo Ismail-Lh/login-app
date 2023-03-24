@@ -1,10 +1,10 @@
 import User from '../models/User.js';
 
 // *@desc Get a user by name
-// *@route GET /api/users/:username
-// *@access PRIVATE
+// *@route GET /api/users/user
+// *@access public
 export const getUser = async (req, res) => {
-	const { username } = req.params;
+	// const user = req.user;
 
 	const user = await User.findOne({ username })
 		.select('-password')

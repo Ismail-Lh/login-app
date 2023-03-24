@@ -9,7 +9,7 @@ const router = Router();
 
 // *@desc Get a user by name
 // *@route GET /api/users/:username
-// *@access PRIVATE
+// *@access public
 router.route('/:username').get(getUser);
 
 // *@desc Update the current user profile
