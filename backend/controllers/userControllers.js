@@ -23,46 +23,30 @@ export const getUser = async (req, res) => {
 // *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
 export const updateCurrentUser = async (req, res) => {
-	const id = req.userId;
+	const { userId, usernameExist, emailExist } = req;
 
 	const { firstName, lastName, email, mobile, address, profile, username } =
 		req.body;
 
-	if (!id)
+	if (!userId)
 		return res.status(401).json({
 			message:
 				'Unauthorized user, you are not logged in. Please log in again to get access...',
 		});
 
-	const user = await User.findById(id).select('-password').exec();
+	const user = await User.findById(userId).select('-password').exec();
 
 	if (!user)
 		res.status(404).json({
 			message: 'User not found. Please try again.',
 		});
 
-	// !: Check for duplicate users
-	const usernameExistPromise = User.findOne({ username })
-		.collation({ locale: 'en', strength: 2 })
-		.lean()
-		.exec();
-
-	const emailExistPromise = User.findOne({ email })
-		.collation({ locale: 'en', strength: 2 })
-		.lean()
-		.exec();
-
-	const [usernameExist, emailExist] = await Promise.all([
-		usernameExistPromise,
-		emailExistPromise,
-	]);
-
-	if (usernameExist && usernameExist?._id.toString() !== id)
+	if (usernameExist && usernameExist?._id.toString() !== userId)
 		return res.status(409).json({
 			message: 'Username already used! Please try another username!',
 		});
 
-	if (emailExist && emailExist?._id.toString() !== id)
+	if (emailExist && emailExist?._id.toString() !== userId)
 		return res.status(409).json({
 			message: 'Email address already used! Please try another email address!',
 		});

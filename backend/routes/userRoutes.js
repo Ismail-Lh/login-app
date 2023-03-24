@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { getUser, updateCurrentUser } from '../controllers/userControllers.js';
-import { protectedRoute } from '../middleware/authMiddleware.js';
+import {
+	checkDuplicateUser,
+	protectedRoute,
+} from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -12,7 +15,8 @@ router.route('/:username').get(getUser);
 // *@desc Update the current user profile
 // *@route PATCH /api/users/update-current-user
 // *@access PRIVATE
-router.route('/update-current-user').patch(protectedRoute, updateCurrentUser);
-// router.route('/update-current-user').patch(updateCurrentUser);
+router
+	.route('/update-current-user')
+	.patch(protectedRoute, checkDuplicateUser, updateCurrentUser);
 
 export default router;

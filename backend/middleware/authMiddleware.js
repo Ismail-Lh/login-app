@@ -48,3 +48,32 @@ export const checkUser = async (req, res, next) => {
 
 	next();
 };
+
+// ?: Check for duplicate username or email address
+export const checkDuplicateUser = async (req, res, next) => {
+	const { email, username, userName } = req.body;
+
+	const name = username || userName;
+
+	// !: Check for duplicate users
+	const usernameExistPromise = User.findOne({ username: name })
+		.collation({ locale: 'en', strength: 2 })
+		.lean()
+		.exec();
+
+	const emailExistPromise = User.findOne({ email })
+		.collation({ locale: 'en', strength: 2 })
+		.lean()
+		.exec();
+
+	const [usernameExist, emailExist] = await Promise.all([
+		usernameExistPromise,
+		emailExistPromise,
+	]);
+
+	req.userId;
+	req.usernameExist = usernameExist;
+	req.emailExist = emailExist;
+
+	next();
+};

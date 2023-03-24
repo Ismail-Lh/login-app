@@ -21,15 +21,15 @@ const Profile = () => {
 	const [file, setFile] = useState();
 
 	const {
-		auth: { user, token },
+		auth: { user },
 		setUser,
 	} = useAuthStore(state => state);
 
 	const { mutate: updateUser, isLoading } = useMutation({
 		mutationFn: updateCurrentUser,
 		onSuccess: data => {
-			setUser(data.user);
-			toast.success(<b>{data.message}</b>);
+			setUser(data?.user);
+			toast.success(<b>{data?.message}</b>);
 			queryClient.invalidateQueries(['users']);
 		},
 		onError: error => {
@@ -63,6 +63,8 @@ const Profile = () => {
 		validateOnChange: false,
 		onSubmit: async values => {
 			values = Object.assign(values, { profile: file || user?.profile || '' });
+
+			const token = localStorage.getItem('token');
 
 			updateUser({ values, token });
 		},

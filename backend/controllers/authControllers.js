@@ -25,6 +25,7 @@ export const isValidUser = async (req, res) => {
 // *@route POST /api/auth/register
 // *@access PUBLIC
 export const register = async (req, res) => {
+	const { emailExist, usernameExist } = req;
 	const { userName: username, email, password, profile } = req.body;
 
 	// !: Check for required fields
@@ -32,24 +33,14 @@ export const register = async (req, res) => {
 		return res.status(400).json({ message: 'All fields are required!' });
 
 	// !: Check for duplicate users
-	const usernameExistPromise = User.findOne({ username })
-		.collation({ locale: 'en', strength: 2 })
-		.lean()
-		.exec();
-
-	const emailExistPromise = User.findOne({ email })
-		.collation({ locale: 'en', strength: 2 })
-		.lean()
-		.exec();
-
-	const [usernameExist, emailExist] = await Promise.all([
-		usernameExistPromise,
-		emailExistPromise,
-	]);
-
-	if (usernameExist || emailExist)
+	if (usernameExist)
 		return res.status(409).json({
-			message: 'User already exist! Please try again!',
+			message: 'Username already used! Please try another name!',
+		});
+
+	if (emailExist)
+		return res.status(409).json({
+			message: 'Email address already used! Please try another address!',
 		});
 
 	// ?: Create a new user

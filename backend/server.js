@@ -35,15 +35,9 @@ app.use(cors(corsOptions));
 app.use(morgan('tiny'));
 app.disable('x-powered-by');
 
-// ?: GLOBAL ROUTES
-// app.use('/', express.static(path.join(__dirname, 'public')));
-
-// app.use('/', globalRoute);
-
 // ?: GENERAL ROUTES
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-// app.use('/api/notes', noteRoutes);
 
 // ?: NOT FOUND ROUTES
 // app.all('*', (req, res) => {

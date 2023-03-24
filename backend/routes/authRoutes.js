@@ -10,7 +10,11 @@ import {
 	resetPassword,
 	verifyOtp,
 } from '../controllers/authControllers.js';
-import { checkUser, localVariables } from '../middleware/authMiddleware.js';
+import {
+	checkDuplicateUser,
+	checkUser,
+	localVariables,
+} from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -22,7 +26,7 @@ router.route('/').post(isValidUser);
 // *@desc Create a new account
 // *@route POST /api/auth/register
 // *@access PUBLIC
-router.route('/register').post(register);
+router.route('/register').post(checkDuplicateUser, register);
 
 // *@desc Send the email
 // *@route POST /api/auth/register-mail
