@@ -47,8 +47,6 @@ export const checkUser = async (req, res, next) => {
 			message: 'Unauthorized user, invalid username. Please try again.',
 		});
 
-	req.user = user;
-
 	next();
 };
 

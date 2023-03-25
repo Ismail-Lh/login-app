@@ -4,7 +4,7 @@ import avatar from '../assets/profile.png';
 import { convertToBase64 } from '../helpers/convert';
 import { useAuthStore } from '../store';
 
-const AvatarImg = () => {
+const ProfileImageUpload = ({ userImg }) => {
 	const {
 		setProfileImg,
 		auth: { profileImg },
@@ -19,7 +19,7 @@ const AvatarImg = () => {
 		<div className='profile flex justify-center py-4'>
 			<label htmlFor='profile'>
 				<img
-					src={profileImg || avatar}
+					src={userImg || profileImg || avatar}
 					className={styles.profile_img}
 					alt='avatar'
 				/>
@@ -36,4 +36,4 @@ const AvatarImg = () => {
 	);
 };
 
-export default AvatarImg;
+export default ProfileImageUpload;

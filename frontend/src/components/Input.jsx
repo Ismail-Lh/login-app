@@ -2,16 +2,14 @@ import React from 'react';
 
 import styles from '../styles/Username.module.css';
 
-const Input = (value, type = 'text', placeholder, handleChange) => {
-	console.log(value);
-
+const Input = ({ type = 'text', placeholder, formik, name }) => {
 	return (
 		<input
 			className={styles.textbox}
-			value={value.value}
 			type={type}
-			onChange={handleChange}
+			name={name}
 			placeholder={placeholder}
+			{...formik.getFieldProps(name)}
 		/>
 	);
 };

@@ -47,8 +47,6 @@ const Reset = () => {
 		},
 	});
 
-	// if (status && status !== 201) return <Navigate to='/password' replace />;
-
 	return (
 		<div className='container mx-auto'>
 			<Toaster position='top-center' reverseOrder={false} />

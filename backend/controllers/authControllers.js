@@ -123,7 +123,7 @@ export const login = async (req, res) => {
 		.cookie('token', access_token, {
 			httpOnly: true, //accessible only by web server
 			secure: process.env.NODE_ENV === 'production',
-			// sameSite: 'None', //cross-site cookie
+			sameSite: 'None', //cross-site cookie
 			// maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
 		})
 		.status(200)

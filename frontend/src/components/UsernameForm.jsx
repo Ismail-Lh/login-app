@@ -1,15 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 
-import styles from '../styles/Username.module.css';
-import avatar from '../assets/profile.png';
 import { validateFields } from '../helpers/validate';
 
 import { useAuthStore } from '../store';
-import { isValidUser } from '../lib/apiRequest';
-import Button from '../components/Button';
+import { getUser, isValidUser } from '../lib/apiRequest';
+import Form from './Form';
+import Input from './Input';
+import Button from './Button';
+import Avatar from './Avatar';
+import FormFooter from './FormFooter';
 
 const UsernameForm = () => {
 	const navigate = useNavigate();
@@ -27,7 +29,7 @@ const UsernameForm = () => {
 
 	const formik = useFormik({
 		initialValues: {
-			username: 'ismail',
+			username: '',
 		},
 		validate: validateFields,
 		validateOnBlur: false,
@@ -38,18 +40,11 @@ const UsernameForm = () => {
 	});
 
 	return (
-		<form className='py-1' onSubmit={formik.handleSubmit}>
-			<div className='profile flex justify-center py-4'>
-				<img src={avatar} className={styles.profile_img} alt='avatar' />
-			</div>
+		<Form onSubmit={formik.handleSubmit}>
+			<Avatar />
 
 			<div className='textbox flex flex-col items-center gap-6'>
-				<input
-					{...formik.getFieldProps('username')}
-					className={styles.textbox}
-					type='text'
-					placeholder='Username'
-				/>
+				<Input name='username' formik={formik} placeholder='Username' />
 				<Button
 					isLoading={isLoading}
 					loadingText='Checking User...'
@@ -57,15 +52,12 @@ const UsernameForm = () => {
 				/>
 			</div>
 
-			<div className='text-center py-4'>
-				<span className='text-gray-500'>
-					Not a Member{' '}
-					<Link className='text-red-500' to='/register'>
-						Register Now
-					</Link>
-				</span>
-			</div>
-		</form>
+			<FormFooter
+				text='Not a Member'
+				linkText='Register Now'
+				route='/register'
+			/>
+		</Form>
 	);
 };
 

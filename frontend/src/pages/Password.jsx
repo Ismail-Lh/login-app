@@ -1,31 +1,31 @@
 import { Toaster } from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from '../styles/Username.module.css';
-import { useAuthStore } from '../store';
 import PasswordForm from '../components/PasswordForm';
 
+import { useAuthStore } from '../store';
+import { getUser } from '../lib/apiRequest';
+import FormHeader from '../components/FormHeader';
+import Container from '../components/Container';
+
 const Password = () => {
-	const { user } = useAuthStore(state => state.auth);
+	const { username } = useAuthStore(state => state.auth);
+
+	const { data: user } = useQuery({
+		queryKey: ['users', username],
+		queryFn: () => getUser(username),
+	});
 
 	return (
-		<div className='container mx-auto'>
-			<Toaster position='top-center' reverseOrder={false} />
+		<Container>
+			<FormHeader
+				title={`Hello ${user?.firstName || user?.username}!`}
+				subTitle='Explore More by connecting with us.'
+			/>
 
-			<div className='flex justify-center items-center h-screen'>
-				<div className={styles.glass}>
-					<div className='title flex flex-col items-center'>
-						<h4 className='text-5xl font-bold'>
-							Hello {user?.firstName || user?.username}!
-						</h4>
-						<span className='py-4 text-xl w-2/3 text-center text-gray-500'>
-							Explore More by connecting with us.
-						</span>
-					</div>
-
-					<PasswordForm />
-				</div>
-			</div>
-		</div>
+			<PasswordForm user={user} />
+		</Container>
 	);
 };
 

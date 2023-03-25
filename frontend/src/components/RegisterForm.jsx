@@ -3,13 +3,15 @@ import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 
-import styles from '../styles/Username.module.css';
+import Form from './Form';
+import FormFooter from './FormFooter';
+import Input from './Input';
+import Button from './Button';
+import ProfileImageUpload from './ProfileImageUpload';
 
 import { registerUser } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
-import AvatarImg from './AvatarImg';
 import { useAuthStore } from '../store';
-import Button from './Button';
 
 const RegisterForm = () => {
 	const queryClient = useQueryClient();
@@ -44,30 +46,26 @@ const RegisterForm = () => {
 		},
 	});
 
+	const fields = [
+		{ name: 'email', type: 'email', placeholder: 'Enter your email address' },
+		{ name: 'userName', type: 'text', placeholder: 'Enter your username' },
+		{ name: 'password', type: 'password', placeholder: 'Enter your password' },
+	];
+
 	return (
-		<form className='py-1' onSubmit={formik.handleSubmit}>
-			<AvatarImg />
+		<Form onSubmit={formik.handleSubmit}>
+			<ProfileImageUpload />
 
 			<div className='textbox flex flex-col items-center gap-6'>
-				<input
-					{...formik.getFieldProps('email')}
-					className={styles.textbox}
-					type='text'
-					placeholder='Enter your email address'
-				/>
-
-				<input
-					{...formik.getFieldProps('userName')}
-					className={styles.textbox}
-					type='text'
-					placeholder='Enter your username'
-				/>
-				<input
-					{...formik.getFieldProps('password')}
-					className={styles.textbox}
-					type='password'
-					placeholder='Enter your password'
-				/>
+				{fields.map(({ type, name, placeholder }) => (
+					<Input
+						key={name}
+						type={type}
+						name={name}
+						placeholder={placeholder}
+						formik={formik}
+					/>
+				))}
 
 				<Button
 					isLoading={isLoading}
@@ -76,15 +74,8 @@ const RegisterForm = () => {
 				/>
 			</div>
 
-			<div className='text-center py-4'>
-				<span className='text-gray-500'>
-					Already Register?{' '}
-					<Link className='text-red-500' to='/'>
-						Login now!
-					</Link>
-				</span>
-			</div>
-		</form>
+			<FormFooter text='Already Register?' linkText='Login now!' route='/' />
+		</Form>
 	);
 };
 

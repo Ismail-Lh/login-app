@@ -25,8 +25,6 @@ const sendEmail = async (username, userEmail, text, subject) => {
 export const getUser = async username => {
 	const { data } = await API_URL.get(`/users/${username}`);
 
-	console.log(data);
-
 	return data;
 };
 
