@@ -4,7 +4,7 @@ import Container from '../components/Container';
 
 const Register = () => {
 	return (
-		<Container style={{ width: '100%' }}>
+		<Container style={{ width: '50%' }}>
 			<FormHeader title='Register' subTitle='Happy to join you!' />
 
 			<RegisterForm />

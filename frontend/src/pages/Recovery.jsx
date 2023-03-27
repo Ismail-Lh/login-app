@@ -23,7 +23,7 @@ const Recovery = () => {
 	};
 
 	return (
-		<Container>
+		<Container style={{ display: 'grid', alignItems: 'center', height: '80%' }}>
 			<FormHeader
 				title='Recovery!'
 				subTitle='Enter the OTP to recover your password.'

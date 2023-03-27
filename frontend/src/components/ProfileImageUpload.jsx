@@ -16,7 +16,7 @@ const ProfileImageUpload = ({ userImg }) => {
 	};
 
 	return (
-		<div className='profile flex justify-center py-4'>
+		<div className='profile flex justify-center pb-4'>
 			<label htmlFor='profile'>
 				<img
 					src={userImg || profileImg || avatar}

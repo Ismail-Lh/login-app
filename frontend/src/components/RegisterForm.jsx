@@ -3,6 +3,8 @@ import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 
+import styles from '../styles/Username.module.css';
+
 import Form from './Form';
 import FormFooter from './FormFooter';
 import Input from './Input';
@@ -56,7 +58,7 @@ const RegisterForm = () => {
 		<Form onSubmit={formik.handleSubmit}>
 			<ProfileImageUpload />
 
-			<div className='textbox flex flex-col items-center gap-6'>
+			<div className={styles.flex_container}>
 				{fields.map(({ type, name, placeholder }) => (
 					<Input
 						key={name}

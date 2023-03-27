@@ -3,6 +3,9 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
 
+import styles from '../styles/Username.module.css';
+
+import Form from './Form';
 import Button from './Button';
 import FormFooter from './FormFooter';
 import Input from './Input';
@@ -11,7 +14,6 @@ import ProfileImageUpload from './ProfileImageUpload';
 import { useAuthStore } from '../store';
 import { logout, updateCurrentUser } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
-import Form from './Form';
 
 const ProfileForm = () => {
 	const queryClient = useQueryClient();
@@ -72,17 +74,17 @@ const ProfileForm = () => {
 
 	const fields = [
 		[
-			{ name: 'firstName', type: 'text', placeholder: 'Enter your firstName.' },
+			{ name: 'firstName', type: 'text', placeholder: 'First Name' },
 			{
 				name: 'lastName',
 				type: 'text',
-				placeholder: 'Enter your lastName.',
+				placeholder: 'Last Name',
 			},
 		],
 		[
-			{ name: 'mobile', type: 'text', placeholder: 'Enter your mobile No.' },
-			{ name: 'email', type: 'text', placeholder: 'Enter your email address.' },
-			{ name: 'address', type: 'text', placeholder: 'Enter your address.' },
+			{ name: 'mobile', type: 'text', placeholder: 'Mobile No' },
+			{ name: 'email', type: 'text', placeholder: 'Email Address' },
+			{ name: 'address', type: 'text', placeholder: 'Address' },
 		],
 	];
 
@@ -90,8 +92,8 @@ const ProfileForm = () => {
 		<Form onSubmit={formik.handleSubmit}>
 			<ProfileImageUpload userImg={user?.profile} />
 
-			<div className='textbox flex flex-col items-center gap-6'>
-				<div className='name flex w-3/4 gap-10'>
+			<div className={styles.flex_container}>
+				<div className='name flex w-3/4 gap-6'>
 					{fields[0].map(({ type, name, placeholder }) => (
 						<Input
 							key={name}

@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 
 import { useAuthStore } from '../store';
-import { generateOtp } from '../lib/apiRequest';
+import { generateOtp, verifyOtp } from '../lib/apiRequest';
 
 import styles from '../styles/Username.module.css';
 
@@ -39,13 +39,15 @@ const RecoveryForm = () => {
 				toast.success(data?.message);
 			}
 		} catch (error) {
+			console.log(error);
+
 			return toast.error('Wrong OTP! Check email again!');
 		}
 	};
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<div className='textbox flex flex-col items-center gap-6'>
+			<div className={styles.flex_container}>
 				<div className='input text-center'>
 					<span className='py-4 text-sm text-left text-gray-500'>
 						Enter the 6 digit OTP sent to your email address.

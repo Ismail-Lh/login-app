@@ -18,7 +18,7 @@ const Password = () => {
 	});
 
 	return (
-		<Container>
+		<Container style={{ display: 'grid', alignItems: 'center' }}>
 			<FormHeader
 				title={`Hello ${user?.firstName || user?.username}!`}
 				subTitle='Explore More by connecting with us.'
