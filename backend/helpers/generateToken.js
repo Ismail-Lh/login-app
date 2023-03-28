@@ -5,7 +5,13 @@ export const accessToken = ({ username, email, userId }) => {
 		{ username, email, userId },
 		process.env.ACCESS_TOKEN_SECRET,
 		{
-			expiresIn: '1d',
+			expiresIn: '20s',
 		}
 	);
+};
+
+export const refreshToken = ({ username }) => {
+	return jwt.sign({ username }, process.env.REFRESH_TOKEN_SECRET, {
+		expiresIn: '1d',
+	});
 };

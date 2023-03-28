@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useFormik } from 'formik';
+import { useFormik, useFormikContext } from 'formik';
 
 import { validateFields } from '../helpers/validate';
 
@@ -34,7 +34,7 @@ const UsernameForm = () => {
 		validate: validateFields,
 		validateOnBlur: false,
 		validateOnChange: false,
-		onSubmit: async values => {
+		onSubmit: values => {
 			isUserExist(values.username);
 		},
 	});

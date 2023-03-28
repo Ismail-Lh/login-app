@@ -4,6 +4,7 @@ const URL = import.meta.env.VITE_URL_BASE;
 
 const API_URL = axios.create({
 	baseURL: URL,
+	withCredentials: true,
 });
 
 export const isValidUser = async username => {

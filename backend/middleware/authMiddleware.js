@@ -3,6 +3,12 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const protectedRoute = async (req, res, next) => {
+	const cookies = req.cookies;
+	console.log(
+		'🚀 ~ file: authMiddleware.js:7 ~ protectedRoute ~ cookies:',
+		cookies
+	);
+
 	const authHeaders = req.headers.authorization || req.headers.Authorization;
 
 	if (!authHeaders && !authHeaders?.startsWith('Bearer'))

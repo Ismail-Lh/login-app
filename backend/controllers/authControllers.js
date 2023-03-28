@@ -1,7 +1,7 @@
 import otpGenerator from 'otp-generator';
 
 import User from '../models/User.js';
-import { accessToken } from '../helpers/generateToken.js';
+import { accessToken, refreshToken } from '../helpers/generateToken.js';
 import { generateEmail } from '../helpers/generateEmail.js';
 import sendEmail from '../helpers/sendEmail.js';
 
@@ -108,9 +108,6 @@ export const login = async (req, res) => {
 				'Unauthorized user, invalid username or password. Please try again.',
 		});
 
-	// !: Remove the password
-	user.password = undefined;
-
 	// ?: Create an accessToken
 	const access_token = accessToken({
 		username: user.username,
@@ -118,20 +115,74 @@ export const login = async (req, res) => {
 		userId: user._id,
 	});
 
-	// ?: Create secure cookie
-	res
-		.cookie('token', access_token, {
-			httpOnly: true, //accessible only by web server
-			secure: process.env.NODE_ENV === 'production',
-			sameSite: 'None', //cross-site cookie
-			// maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
-		})
-		.status(200)
-		.json({
-			message: 'Login successfully...',
-			username: user.username,
-			access_token,
-		});
+	// ?: Create a refreshToken
+	const refresh_token = refreshToken({ username: user.username });
+
+	// !: Remove the password
+	user.password = undefined;
+
+	// ?: Creates Secure Cookie with refresh token
+	res.cookie('token', refresh_token, {
+		httpOnly: true,
+		secure: true,
+		sameSite: 'None',
+		maxAge: 24 * 60 * 60 * 1000,
+	});
+
+	res.status(200).json({
+		message: 'Login successfully...',
+		username: user.username,
+		access_token,
+	});
+};
+
+// *@desc Send a refresh token to the user
+// *@route POST /api/auth/refresh
+// *@access PUBLIC
+export const createRefreshToken = async (req, res) => {
+	const cookies = req.cookies;
+
+	// !: Check if they are a token cookie
+	if (!cookies?.token)
+		return res
+			.status(401)
+			.json({ message: 'Unauthorized user! Please log in again.' });
+
+	const refreshToken = cookies.token;
+
+	// ?: Verify the refreshToken
+	jwt.verify(
+		refreshToken,
+		process.env.REFRESH_TOKEN_SECRET,
+		async (err, decoded) => {
+			if (err)
+				return res.status(403).json({ message: "You don't have access." });
+
+			// ?: Find the user that belong to this token
+			const foundUser = await User.findOne({
+				username: decoded.username,
+			}).exec();
+
+			// !: Check if the user exists
+			if (!foundUser)
+				return res.status(401).json({
+					message: 'The user belongs to this token does no longer exist.',
+				});
+
+			// ?: Create a new accessToken
+			const access_token = accessToken({
+				username: foundUser.username,
+				email: foundUser.email,
+				userId: foundUser._id,
+			});
+
+			res.status(200).json({
+				message: 'Refresh token created successfully',
+				username: foundUser.username,
+				access_token,
+			});
+		}
+	);
 };
 
 // *@desc Logout a user (Clear the JWT cookies if exists)
@@ -144,7 +195,7 @@ export const logout = (req, res) => {
 	if (!cookies?.jwt) res.sendStatus(204);
 
 	// !: Clear the JWT cookie
-	res.clearCookie('jwt', { sameSite: 'None', httpOnly: true, secure: true });
+	res.clearCookie('token', { sameSite: 'None', httpOnly: true, secure: true });
 
 	res.json({ message: 'Cookies cleared.' });
 };
