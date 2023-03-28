@@ -1,20 +1,19 @@
-import axios from 'axios';
+import axios from './axios';
 
-const URL = import.meta.env.VITE_URL_BASE;
+export const getRefreshToken = async () => {
+	const { data } = await axios.get('/auth/refresh');
 
-const API_URL = axios.create({
-	baseURL: URL,
-	withCredentials: true,
-});
+	return data;
+};
 
 export const isValidUser = async username => {
-	const { data, status } = await API_URL.post('/auth', { username });
+	const { data, status } = await axios.post('/auth', { username });
 
 	return { data, status };
 };
 
 const sendEmail = async (username, userEmail, text, subject) => {
-	return await API_URL.post('/auth/register-mail', {
+	return await axios.post('/auth/register-mail', {
 		username,
 		userEmail,
 		text,
@@ -24,7 +23,7 @@ const sendEmail = async (username, userEmail, text, subject) => {
 
 // ?: Get an user with his name
 export const getUser = async username => {
-	const { data } = await API_URL.get(`/users/${username}`);
+	const { data } = await axios.get(`/users/${username}`);
 
 	return data;
 };
@@ -34,7 +33,7 @@ export const registerUser = async user => {
 	const {
 		data: { message },
 		status,
-	} = await API_URL.post(`/auth/register`, user);
+	} = await axios.post(`/auth/register`, user);
 
 	const { username, email } = user;
 
@@ -47,21 +46,21 @@ export const registerUser = async user => {
 
 // ?: Login to a user account
 export const login = async ({ username, password }) => {
-	const { data } = await API_URL.post(`/auth/login`, { username, password });
+	const { data } = await axios.post(`/auth/login`, { username, password });
 
 	return data;
 };
 
 // ?: Login to a user account
 export const logout = async () => {
-	const { data } = await API_URL.post(`/auth/logout`);
+	const { data } = await axios.post(`/auth/logout`);
 
 	return data;
 };
 
 // ?: Update current login user account info
 export const updateCurrentUser = async ({ values: user, token }) => {
-	const { data } = await API_URL.patch('/users/update-current-user', user, {
+	const { data } = await axios.patch('/users/update-current-user', user, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 
@@ -73,7 +72,7 @@ export const generateOtp = async username => {
 	const {
 		data: { otpCode },
 		status,
-	} = await API_URL.get('/auth/generate-otp', {
+	} = await axios.get('/auth/generate-otp', {
 		params: { username },
 	});
 
@@ -93,7 +92,7 @@ export const generateOtp = async username => {
 
 // ?: Verify the OTP code
 export const verifyOtp = async ({ username, otpCode }) => {
-	const { data, status } = await API_URL.get('/auth/verify-otp', {
+	const { data, status } = await axios.get('/auth/verify-otp', {
 		params: { username, otpCode },
 	});
 
@@ -102,7 +101,7 @@ export const verifyOtp = async ({ username, otpCode }) => {
 
 // ?: Reset password req
 export const resetPassword = async ({ username, password }) => {
-	const { data, status } = await API_URL.patch('/auth/reset-password', {
+	const { data, status } = await axios.patch('/auth/reset-password', {
 		username,
 		password,
 	});
@@ -112,7 +111,7 @@ export const resetPassword = async ({ username, password }) => {
 
 // ?:Create a user session
 export const createResetSession = async () => {
-	const { data, status } = await API_URL.get('/auth/create-reset-session');
+	const { data, status } = await axios.get('/auth/create-reset-session');
 
 	return { data, status };
 };

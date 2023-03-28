@@ -1,4 +1,5 @@
 import otpGenerator from 'otp-generator';
+import jwt from 'jsonwebtoken';
 
 import User from '../models/User.js';
 import { accessToken, refreshToken } from '../helpers/generateToken.js';
@@ -192,7 +193,7 @@ export const logout = (req, res) => {
 	const cookies = req.cookies;
 
 	// !: Check if the JWT cookie exists
-	if (!cookies?.jwt) res.sendStatus(204);
+	if (!cookies?.token) res.sendStatus(204);
 
 	// !: Clear the JWT cookie
 	res.clearCookie('token', { sameSite: 'None', httpOnly: true, secure: true });

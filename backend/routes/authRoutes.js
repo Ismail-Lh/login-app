@@ -40,9 +40,9 @@ router.route('/register-mail').post(registerMail);
 router.route('/login').post(login);
 
 // *@desc Send a refresh token to the user
-// *@route POST /api/auth/refresh
+// *@route GET /api/auth/refresh
 // *@access PUBLIC
-router.route('/refresh').post(createRefreshToken);
+router.route('/refresh').get(createRefreshToken);
 
 // *@desc Login to a user account
 // *@route POST /api/auth/logout

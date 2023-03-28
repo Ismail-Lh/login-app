@@ -5,6 +5,7 @@ export const useAuthStore = create(set => ({
 		username: '',
 		user: {},
 		profileImg: null,
+		accessToken: null,
 	},
 	setUsername: name =>
 		set(state => ({ auth: { ...state.auth, username: name } })),
@@ -12,4 +13,6 @@ export const useAuthStore = create(set => ({
 		set(state => ({ auth: { ...state.auth, user: userInfo } })),
 	setProfileImg: img =>
 		set(state => ({ auth: { ...state.auth, profileImg: img } })),
+	setAccessToken: token =>
+		set(state => ({ auth: { ...state.auth, accessToken: token } })),
 }));

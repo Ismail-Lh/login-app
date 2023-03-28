@@ -14,11 +14,13 @@ import ProfileImageUpload from './ProfileImageUpload';
 import { useAuthStore } from '../store';
 import { logout, updateCurrentUser } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const ProfileForm = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
-	const navigate = useNavigate();
+	const axiosPrivate = useAxiosPrivate();
 
 	const {
 		auth: { user, profileImg },
@@ -26,7 +28,12 @@ const ProfileForm = () => {
 	} = useAuthStore(state => state);
 
 	const { mutate: updateUser, isLoading } = useMutation({
-		mutationFn: updateCurrentUser,
+		mutationFn: async credentials => {
+			const { data } = await axiosPrivate.patch(
+				'/users/update-current-user',
+				credentials
+			);
+		},
 		onSuccess: data => {
 			setUser(data?.user);
 			toast.success(<b>{data?.message}</b>);
@@ -66,9 +73,7 @@ const ProfileForm = () => {
 				profile: profileImg || user?.profile || '',
 			});
 
-			const token = localStorage.getItem('token');
-
-			updateUser({ values, token });
+			updateUser(values);
 		},
 	});
 

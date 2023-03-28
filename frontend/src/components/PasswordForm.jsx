@@ -20,13 +20,14 @@ const PasswordForm = ({ user }) => {
 
 	const {
 		setUser,
+		setAccessToken,
 		auth: { username },
 	} = useAuthStore(state => state);
 
 	const { mutate: loginUser, isLoading } = useMutation(login, {
 		onSuccess: ({ access_token }) => {
 			setUser(user);
-			localStorage.setItem('token', access_token);
+			setAccessToken(access_token);
 			navigate('/profile');
 		},
 		onError: error => {
