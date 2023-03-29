@@ -25,9 +25,9 @@ const PasswordForm = ({ user }) => {
 	} = useAuthStore(state => state);
 
 	const { mutate: loginUser, isLoading } = useMutation(login, {
-		onSuccess: ({ access_token }) => {
+		onSuccess: data => {
 			setUser(user);
-			setAccessToken(access_token);
+			setAccessToken(data.access_token);
 			navigate('/profile');
 		},
 		onError: error => {

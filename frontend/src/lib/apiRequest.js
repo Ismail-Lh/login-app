@@ -1,7 +1,7 @@
-import axios from './axios';
+import axios, { axiosPrivate } from './axios';
 
 export const getRefreshToken = async () => {
-	const { data } = await axios.get('/auth/refresh');
+	const { data } = await axios.get('/auth/refresh', { withCredentials: true });
 
 	return data;
 };
@@ -46,23 +46,17 @@ export const registerUser = async user => {
 
 // ?: Login to a user account
 export const login = async ({ username, password }) => {
-	const { data } = await axios.post(`/auth/login`, { username, password });
+	const { data } = await axiosPrivate.post(`/auth/login`, {
+		username,
+		password,
+	});
 
 	return data;
 };
 
 // ?: Login to a user account
 export const logout = async () => {
-	const { data } = await axios.post(`/auth/logout`);
-
-	return data;
-};
-
-// ?: Update current login user account info
-export const updateCurrentUser = async ({ values: user, token }) => {
-	const { data } = await axios.patch('/users/update-current-user', user, {
-		headers: { Authorization: `Bearer ${token}` },
-	});
+	const { data } = await axiosPrivate.post(`/auth/logout`);
 
 	return data;
 };

@@ -3,12 +3,6 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const protectedRoute = async (req, res, next) => {
-	const cookies = req.cookies;
-	console.log(
-		'🚀 ~ file: authMiddleware.js:7 ~ protectedRoute ~ cookies:',
-		cookies
-	);
-
 	const authHeaders = req.headers.authorization || req.headers.Authorization;
 
 	if (!authHeaders && !authHeaders?.startsWith('Bearer'))
@@ -19,13 +13,15 @@ export const protectedRoute = async (req, res, next) => {
 
 	const token = authHeaders.split(' ')[1];
 
-	const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+		if (err) return res.status(403).json({ message: err.message });
 
-	req.username = decodedToken.username;
-	req.email = decodedToken.email;
-	req.userId = decodedToken.userId;
+		req.username = decoded.username;
+		req.email = decoded.email;
+		req.userId = decoded.userId;
 
-	next();
+		next();
+	});
 };
 
 // ?: Create a locals variables middleware

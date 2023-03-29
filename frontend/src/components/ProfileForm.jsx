@@ -12,7 +12,7 @@ import Input from './Input';
 import ProfileImageUpload from './ProfileImageUpload';
 
 import { useAuthStore } from '../store';
-import { logout, updateCurrentUser } from '../lib/apiRequest';
+import { logout } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
@@ -22,18 +22,22 @@ const ProfileForm = () => {
 
 	const axiosPrivate = useAxiosPrivate();
 
+	const updateCurrentUser = async userInfo => {
+		const { data } = await axiosPrivate.patch(
+			'/users/update-current-user',
+			userInfo
+		);
+
+		return data;
+	};
+
 	const {
 		auth: { user, profileImg },
 		setUser,
 	} = useAuthStore(state => state);
 
 	const { mutate: updateUser, isLoading } = useMutation({
-		mutationFn: async credentials => {
-			const { data } = await axiosPrivate.patch(
-				'/users/update-current-user',
-				credentials
-			);
-		},
+		mutationFn: updateCurrentUser,
 		onSuccess: data => {
 			setUser(data?.user);
 			toast.success(<b>{data?.message}</b>);
@@ -48,7 +52,7 @@ const ProfileForm = () => {
 		mutationFn: logout,
 		onSuccess: () => {
 			queryClient.invalidateQueries(['users']);
-			localStorage.removeItem('token');
+
 			navigate('/');
 		},
 		onError: error => {
@@ -125,6 +129,10 @@ const ProfileForm = () => {
 					loadingText='Updating user...'
 					text='Update'
 				/>
+
+				{/* <button type='button' onClick={() => refresh()}>
+					Refresh
+				</button> */}
 			</div>
 
 			<FormFooter

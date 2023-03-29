@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 
+const initialState = {
+	username: '',
+	user: {},
+	profileImg: null,
+	accessToken: null,
+};
+
 export const useAuthStore = create(set => ({
-	auth: {
-		username: '',
-		user: {},
-		profileImg: null,
-		accessToken: null,
-	},
+	auth: initialState,
 	setUsername: name =>
 		set(state => ({ auth: { ...state.auth, username: name } })),
 	setUser: userInfo =>
@@ -15,4 +17,5 @@ export const useAuthStore = create(set => ({
 		set(state => ({ auth: { ...state.auth, profileImg: img } })),
 	setAccessToken: token =>
 		set(state => ({ auth: { ...state.auth, accessToken: token } })),
+	clearAuthState: () => ({ auth: { ...initialState } }),
 }));

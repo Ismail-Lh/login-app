@@ -119,9 +119,6 @@ export const login = async (req, res) => {
 	// ?: Create a refreshToken
 	const refresh_token = refreshToken({ username: user.username });
 
-	// !: Remove the password
-	user.password = undefined;
-
 	// ?: Creates Secure Cookie with refresh token
 	res.cookie('token', refresh_token, {
 		httpOnly: true,
@@ -129,6 +126,9 @@ export const login = async (req, res) => {
 		sameSite: 'None',
 		maxAge: 24 * 60 * 60 * 1000,
 	});
+
+	// !: Remove the password
+	user.password = undefined;
 
 	res.status(200).json({
 		message: 'Login successfully...',
