@@ -162,7 +162,9 @@ export const createRefreshToken = async (req, res) => {
 			// ?: Find the user that belong to this token
 			const foundUser = await User.findOne({
 				username: decoded.username,
-			}).exec();
+			})
+				.select('-password')
+				.exec();
 
 			// !: Check if the user exists
 			if (!foundUser)
@@ -179,7 +181,7 @@ export const createRefreshToken = async (req, res) => {
 
 			res.status(200).json({
 				message: 'Refresh token created successfully',
-				username: foundUser.username,
+				user: foundUser,
 				access_token,
 			});
 		}

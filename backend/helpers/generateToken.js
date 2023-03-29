@@ -5,7 +5,7 @@ export const accessToken = ({ username, email, userId }) => {
 		{ username, email, userId },
 		process.env.ACCESS_TOKEN_SECRET,
 		{
-			expiresIn: '10s',
+			expiresIn: '15m',
 		}
 	);
 };

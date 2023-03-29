@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Navigate, redirect, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
@@ -18,6 +18,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const ProfileForm = () => {
 	const navigate = useNavigate();
+
 	const queryClient = useQueryClient();
 
 	const axiosPrivate = useAxiosPrivate();
@@ -36,7 +37,11 @@ const ProfileForm = () => {
 		setUser,
 	} = useAuthStore(state => state);
 
-	const { mutate: updateUser, isLoading } = useMutation({
+	const {
+		mutate: updateUser,
+		isLoading,
+		error,
+	} = useMutation({
 		mutationFn: updateCurrentUser,
 		onSuccess: data => {
 			setUser(data?.user);
@@ -97,6 +102,8 @@ const ProfileForm = () => {
 		],
 	];
 
+	if (error?.response.status === 403) return <Navigate to='/' replace />;
+
 	return (
 		<Form onSubmit={formik.handleSubmit}>
 			<ProfileImageUpload userImg={user?.profile} />
@@ -129,10 +136,6 @@ const ProfileForm = () => {
 					loadingText='Updating user...'
 					text='Update'
 				/>
-
-				{/* <button type='button' onClick={() => refresh()}>
-					Refresh
-				</button> */}
 			</div>
 
 			<FormFooter

@@ -10,6 +10,7 @@ import Reset from './pages/Reset';
 
 import ProtectedRoute from './HOC/ProtectedRoute';
 import RequireAuth from './HOC/RequireAuth';
+import PersistLogin from './components/PersistLogin';
 
 // ?: Root routes
 const router = createBrowserRouter([
@@ -26,9 +27,11 @@ const router = createBrowserRouter([
 	{
 		path: '/profile',
 		element: (
-			<RequireAuth>
-				<Profile />
-			</RequireAuth>
+			<PersistLogin>
+				<RequireAuth>
+					<Profile />
+				</RequireAuth>
+			</PersistLogin>
 		),
 	},
 	{
