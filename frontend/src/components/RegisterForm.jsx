@@ -1,19 +1,14 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 
-import styles from '../styles/Username.module.css';
-
 import Form from './Form';
-import FormFooter from './FormFooter';
-import Input from './Input';
-import Button from './Button';
-import ProfileImageUpload from './ProfileImageUpload';
 
 import { registerUser } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
 import { useAuthStore } from '../store';
+import { registerFields } from '../inputsData';
 
 const RegisterForm = () => {
 	const queryClient = useQueryClient();
@@ -48,36 +43,20 @@ const RegisterForm = () => {
 		},
 	});
 
-	const fields = [
-		{ name: 'email', type: 'email', placeholder: 'Enter your email address' },
-		{ name: 'userName', type: 'text', placeholder: 'Enter your username' },
-		{ name: 'password', type: 'password', placeholder: 'Enter your password' },
-	];
-
 	return (
-		<Form onSubmit={formik.handleSubmit}>
-			<ProfileImageUpload />
-
-			<div className={styles.flex_container}>
-				{fields.map(({ type, name, placeholder }) => (
-					<Input
-						key={name}
-						type={type}
-						name={name}
-						placeholder={placeholder}
-						formik={formik}
-					/>
-				))}
-
-				<Button
-					isLoading={isLoading}
-					loadingText='Registering user...'
-					text='Register'
-				/>
-			</div>
-
-			<FormFooter text='Already Register?' linkText='Login now!' route='/' />
-		</Form>
+		<Form
+			onSubmit={formik.handleSubmit}
+			formik={formik}
+			isLoading={isLoading}
+			btnLoadingText='Registering user...'
+			btnText='Register'
+			avatar={false}
+			fields={registerFields}
+			footerText='Already Register?'
+			footerLinkText='Login Now'
+			footerRoute='/'
+			flexContainer={true}
+		/>
 	);
 };
 

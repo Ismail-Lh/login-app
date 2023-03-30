@@ -3,18 +3,13 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
 
-import styles from '../styles/Username.module.css';
-
 import Form from './Form';
-import Button from './Button';
-import FormFooter from './FormFooter';
-import Input from './Input';
-import ProfileImageUpload from './ProfileImageUpload';
 
 import { useAuthStore } from '../store';
 import { logout } from '../lib/apiRequest';
 import { validateFields } from '../helpers/validate';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import { profileFields } from '../inputsData';
 
 const ProfileForm = () => {
 	const navigate = useNavigate();
@@ -87,65 +82,24 @@ const ProfileForm = () => {
 		},
 	});
 
-	const fields = [
-		[
-			{ name: 'firstName', type: 'text', placeholder: 'First Name' },
-			{
-				name: 'lastName',
-				type: 'text',
-				placeholder: 'Last Name',
-			},
-		],
-		[
-			{ name: 'mobile', type: 'text', placeholder: 'Mobile No' },
-			{ name: 'email', type: 'text', placeholder: 'Email Address' },
-			{ name: 'address', type: 'text', placeholder: 'Address' },
-		],
-	];
-
 	if (error?.response.status === 403)
 		return <Navigate to='/' state={{ from: location }} replace />;
 
 	return (
-		<Form onSubmit={formik.handleSubmit}>
-			<ProfileImageUpload userImg={user?.profile} />
-
-			<div className={styles.flex_container}>
-				<div className='name flex w-3/4 gap-6'>
-					{fields[0].map(({ type, name, placeholder }) => (
-						<Input
-							key={name}
-							type={type}
-							name={name}
-							placeholder={placeholder}
-							formik={formik}
-						/>
-					))}
-				</div>
-
-				{fields[1].map(({ type, name, placeholder }) => (
-					<Input
-						key={name}
-						type={type}
-						name={name}
-						placeholder={placeholder}
-						formik={formik}
-					/>
-				))}
-
-				<Button
-					isLoading={isLoading}
-					loadingText='Updating user...'
-					text='Update'
-				/>
-			</div>
-
-			<FormFooter
-				text='Come back later.'
-				btnText='Logout!'
-				onClick={logoutUser}
-			/>
-		</Form>
+		<Form
+			onSubmit={formik.handleSubmit}
+			formik={formik}
+			isLoading={isLoading}
+			btnLoadingText='Updating User...'
+			btnText='Update'
+			avatar={false}
+			fields={profileFields}
+			footerText='Come back later.'
+			footerBtnText='Logout!'
+			onClick={logoutUser}
+			userImg={user?.profile}
+			flexContainer={true}
+		/>
 	);
 };
 

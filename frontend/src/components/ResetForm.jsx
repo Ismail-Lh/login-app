@@ -3,15 +3,12 @@ import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-import styles from '../styles/Username.module.css';
-
 import Form from './Form';
-import Button from './Button';
-import Input from './Input';
 
 import { validateFields } from '../helpers/validate';
 import { createResetSession, resetPassword } from '../lib/apiRequest';
 import { useAuthStore } from '../store';
+import { resetFields } from '../inputsData';
 
 const ResetForm = () => {
 	const navigate = useNavigate();
@@ -51,35 +48,16 @@ const ResetForm = () => {
 		},
 	});
 
-	const fields = [
-		{ name: 'password', type: 'text', placeholder: 'Enter new password' },
-		{
-			name: 'confirmPassword',
-			type: 'text',
-			placeholder: 'Confirm password',
-		},
-	];
-
 	return (
-		<Form onSubmit={formik.handleSubmit}>
-			<div className={styles.flex_container}>
-				{fields.map(({ name, type, placeholder }) => (
-					<Input
-						key={name}
-						type={type}
-						placeholder={placeholder}
-						name={name}
-						formik={formik}
-					/>
-				))}
-
-				<Button
-					isLoading={isLoading}
-					loadingText='Password resetting...'
-					text='Reset Password'
-				/>
-			</div>
-		</Form>
+		<Form
+			onSubmit={formik.handleSubmit}
+			formik={formik}
+			isLoading={isLoading}
+			btnLoadingText='Password resetting...'
+			btnText='Reset Password'
+			fields={resetFields}
+			flexContainer={true}
+		/>
 	);
 };
 

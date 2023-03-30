@@ -1,17 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useFormik, useFormikContext } from 'formik';
+import { useMutation } from '@tanstack/react-query';
+import { useFormik } from 'formik';
 
 import { validateFields } from '../helpers/validate';
 
 import { useAuthStore } from '../store';
-import { getUser, isValidUser } from '../lib/apiRequest';
+import { isValidUser } from '../lib/apiRequest';
+
 import Form from './Form';
-import Input from './Input';
-import Button from './Button';
-import Avatar from './Avatar';
-import FormFooter from './FormFooter';
+import { usernameFields } from '../inputsData';
 
 const UsernameForm = () => {
 	const navigate = useNavigate();
@@ -40,24 +38,18 @@ const UsernameForm = () => {
 	});
 
 	return (
-		<Form onSubmit={formik.handleSubmit}>
-			<Avatar />
-
-			<div className='textbox flex flex-col items-center gap-6'>
-				<Input name='username' formik={formik} placeholder='Username' />
-				<Button
-					isLoading={isLoading}
-					loadingText='Checking User...'
-					text="Let's Go"
-				/>
-			</div>
-
-			<FormFooter
-				text='Not a Member'
-				linkText='Register Now'
-				route='/register'
-			/>
-		</Form>
+		<Form
+			onSubmit={formik.handleSubmit}
+			formik={formik}
+			isLoading={isLoading}
+			btnLoadingText='Checking User...'
+			btnText="Let's Go"
+			avatar={true}
+			fields={usernameFields}
+			footerText='Not a Member'
+			footerLinkText='Register Now'
+			footerRoute='/register'
+		/>
 	);
 };
 

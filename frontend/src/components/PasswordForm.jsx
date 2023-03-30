@@ -3,17 +3,12 @@ import { toast } from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 
-import styles from '../styles/Username.module.css';
-
 import Form from './Form';
-import Input from './Input';
-import Button from './Button';
-import FormFooter from './FormFooter';
-import Avatar from './Avatar';
 
 import { validateFields } from '../helpers/validate';
 import { login } from '../lib/apiRequest';
-import { useAuthStore, usePersistStore } from '../store';
+import { useAuthStore } from '../store';
+import { passwordFields } from '../inputsData';
 
 const PasswordForm = ({ user }) => {
 	const navigate = useNavigate();
@@ -23,8 +18,6 @@ const PasswordForm = ({ user }) => {
 		setAccessToken,
 		auth: { username },
 	} = useAuthStore(state => state);
-
-	const { persistLogin, setPersistLogin } = usePersistStore(state => state);
 
 	const { mutate: loginUser, isLoading } = useMutation(login, {
 		onSuccess: data => {
@@ -49,47 +42,23 @@ const PasswordForm = ({ user }) => {
 		},
 	});
 
-	const togglePersist = () => {
-		setPersistLogin();
-	};
+	// TODO: Add the password show icon functionality
 
 	return (
-		<Form onSubmit={formik.handleSubmit}>
-			<Avatar img={user?.profile} />
-
-			<div className='textbox flex flex-col items-center gap-6'>
-				<Input
-					className={styles.textbox}
-					type='password'
-					placeholder='Enter your password'
-					name='password'
-					formik={formik}
-				/>
-
-				<Button
-					isLoading={isLoading}
-					loadingText='Sign In Loading...'
-					text='Sign In'
-				/>
-
-				<div>
-					<input
-						type='checkbox'
-						name='persistLogin'
-						id='persistLogin'
-						onChange={togglePersist}
-						checked={persistLogin}
-					/>
-					<label htmlFor='persistLogin'>Trust this device!</label>
-				</div>
-			</div>
-
-			<FormFooter
-				text='Forgot Password'
-				linkText='Recover Now'
-				route='/recovery'
-			/>
-		</Form>
+		<Form
+			onSubmit={formik.handleSubmit}
+			formik={formik}
+			isLoading={isLoading}
+			btnLoadingText='Sign In Loading...'
+			btnText='Sign In'
+			avatar={true}
+			avatarImg={user?.profile}
+			fields={passwordFields}
+			footerText='Forgot Password'
+			footerLinkText='Recover Now'
+			footerRoute='/recovery'
+			checkBox={true}
+		/>
 	);
 };
 

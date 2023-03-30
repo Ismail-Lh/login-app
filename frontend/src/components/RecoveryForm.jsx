@@ -46,7 +46,7 @@ const RecoveryForm = () => {
 	};
 
 	return (
-		<Form onSubmit={handleSubmit}>
+		<Form onSubmit={handleSubmit} recovery={true}>
 			<div className={styles.flex_container}>
 				<div className='input text-center'>
 					<span className='py-4 text-sm text-left text-gray-500'>
