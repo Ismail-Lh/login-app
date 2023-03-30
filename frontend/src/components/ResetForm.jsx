@@ -1,14 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 import Form from './Form';
 
-import { validateFields } from '../helpers/validate';
+import useFormikForm from '../hooks/useFormikForm';
 import { createResetSession, resetPassword } from '../lib/apiRequest';
 import { useAuthStore } from '../store';
 import { resetFields } from '../inputsData';
+
+const initialValues = { password: '', confirmPassword: '' };
 
 const ResetForm = () => {
 	const navigate = useNavigate();
@@ -35,18 +36,10 @@ const ResetForm = () => {
 		},
 	});
 
-	const formik = useFormik({
-		initialValues: {
-			password: '',
-			confirmPassword: '',
-		},
-		validate: validateFields,
-		validateOnBlur: false,
-		validateOnChange: false,
-		onSubmit: async values => {
-			resetPasswordMutation({ password: values.password, username });
-		},
-	});
+	const onSubmit = values =>
+		resetPasswordMutation({ password: values.password, username });
+
+	const formik = useFormikForm({ initialValues, onSubmit });
 
 	return (
 		<Form

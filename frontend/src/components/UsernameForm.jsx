@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
-import { useFormik } from 'formik';
-
-import { validateFields } from '../helpers/validate';
 
 import { useAuthStore } from '../store';
 import { isValidUser } from '../lib/apiRequest';
+import useFormikForm from '../hooks/useFormikForm';
 
 import Form from './Form';
 import { usernameFields } from '../inputsData';
+
+const initialValues = {
+	username: '',
+};
 
 const UsernameForm = () => {
 	const navigate = useNavigate();
@@ -25,17 +27,9 @@ const UsernameForm = () => {
 		},
 	});
 
-	const formik = useFormik({
-		initialValues: {
-			username: '',
-		},
-		validate: validateFields,
-		validateOnBlur: false,
-		validateOnChange: false,
-		onSubmit: values => {
-			isUserExist(values.username);
-		},
-	});
+	const onSubmit = values => isUserExist(values.username);
+
+	const formik = useFormikForm({ initialValues, onSubmit });
 
 	return (
 		<Form

@@ -1,14 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useFormik } from 'formik';
 
 import Form from './Form';
 
+import useFormikForm from '../hooks/useFormikForm';
 import { registerUser } from '../lib/apiRequest';
-import { validateFields } from '../helpers/validate';
 import { useAuthStore } from '../store';
 import { registerFields } from '../inputsData';
+
+const initialValues = {
+	userName: '',
+	email: '',
+	password: '',
+};
 
 const RegisterForm = () => {
 	const queryClient = useQueryClient();
@@ -27,21 +32,13 @@ const RegisterForm = () => {
 		},
 	});
 
-	const formik = useFormik({
-		initialValues: {
-			userName: '',
-			email: '',
-			password: '',
-		},
-		validate: validateFields,
-		validateOnBlur: false,
-		validateOnChange: false,
-		onSubmit: async values => {
-			values = Object.assign(values, { profile: profileImg || '' });
+	const onSubmit = values => {
+		values = Object.assign(values, { profile: profileImg || '' });
 
-			createNewUser(values);
-		},
-	});
+		createNewUser(values);
+	};
+
+	const formik = useFormikForm({ initialValues, onSubmit });
 
 	return (
 		<Form

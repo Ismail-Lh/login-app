@@ -12,9 +12,9 @@ const Input = ({ type = 'text', placeholder, formik, name }) => {
 	return (
 		<input
 			className={styles.textbox}
-			ref={inputRef}
 			type={type}
 			name={name}
+			ref={inputRef}
 			placeholder={placeholder}
 			{...formik.getFieldProps(name)}
 		/>

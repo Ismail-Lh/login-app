@@ -1,15 +1,14 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
 
 import Form from './Form';
 
 import { useAuthStore } from '../store';
 import { logout } from '../lib/apiRequest';
-import { validateFields } from '../helpers/validate';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { profileFields } from '../inputsData';
+import useFormikForm from '../hooks/useFormikForm';
 
 const ProfileForm = () => {
 	const navigate = useNavigate();
@@ -61,26 +60,23 @@ const ProfileForm = () => {
 		},
 	});
 
-	const formik = useFormik({
-		initialValues: {
-			firstName: user?.firstName || '',
-			lastName: user?.lastName || '',
-			mobile: user?.mobile || '',
-			address: user?.address || '',
-			email: user?.email || '',
-		},
-		enableReinitialize: true,
-		validate: validateFields,
-		validateOnBlur: false,
-		validateOnChange: false,
-		onSubmit: async values => {
-			values = Object.assign(values, {
-				profile: profileImg || user?.profile || '',
-			});
+	const initialValues = {
+		firstName: user?.firstName || '',
+		lastName: user?.lastName || '',
+		mobile: user?.mobile || '',
+		address: user?.address || '',
+		email: user?.email || '',
+	};
 
-			updateUser(values);
-		},
-	});
+	const onSubmit = values => {
+		values = Object.assign(values, {
+			profile: profileImg || user?.profile || '',
+		});
+
+		updateUser(values);
+	};
+
+	const formik = useFormikForm({ initialValues, onSubmit });
 
 	if (error?.response.status === 403)
 		return <Navigate to='/' state={{ from: location }} replace />;

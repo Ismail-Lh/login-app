@@ -10,7 +10,7 @@ import ProfileImageUpload from './ProfileImageUpload';
 const Form = ({
 	children,
 	onSubmit,
-	fields,
+	fields = [],
 	isLoading,
 	btnLoadingText,
 	btnText,
@@ -22,10 +22,10 @@ const Form = ({
 	footerRoute,
 	footerBtnText,
 	onClick,
-	checkBox,
+	checkBox = false,
 	userImg,
-	flexContainer,
-	recovery,
+	flexContainer = false,
+	recovery = false,
 }) => {
 	return (
 		<form className='py-1' onSubmit={onSubmit}>

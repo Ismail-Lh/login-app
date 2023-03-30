@@ -1,14 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
-import { useFormik } from 'formik';
 
 import Form from './Form';
 
-import { validateFields } from '../helpers/validate';
 import { login } from '../lib/apiRequest';
 import { useAuthStore } from '../store';
 import { passwordFields } from '../inputsData';
+import useFormikForm from '../hooks/useFormikForm';
+
+const initialValues = { password: '' };
 
 const PasswordForm = ({ user }) => {
 	const navigate = useNavigate();
@@ -30,17 +31,9 @@ const PasswordForm = ({ user }) => {
 		},
 	});
 
-	const formik = useFormik({
-		initialValues: {
-			password: '',
-		},
-		validate: validateFields,
-		validateOnBlur: false,
-		validateOnChange: false,
-		onSubmit: async values => {
-			loginUser({ username, password: values.password });
-		},
-	});
+	const onSubmit = values => loginUser({ username, password: values.password });
+
+	const formik = useFormikForm({ initialValues, onSubmit });
 
 	// TODO: Add the password show icon functionality
 
