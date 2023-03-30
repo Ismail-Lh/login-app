@@ -1,4 +1,4 @@
-import { Navigate, redirect, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { toast } from 'react-hot-toast';
@@ -18,6 +18,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const ProfileForm = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const queryClient = useQueryClient();
 
@@ -102,7 +103,8 @@ const ProfileForm = () => {
 		],
 	];
 
-	if (error?.response.status === 403) return <Navigate to='/' replace />;
+	if (error?.response.status === 403)
+		return <Navigate to='/' state={{ from: location }} replace />;
 
 	return (
 		<Form onSubmit={formik.handleSubmit}>

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 const initialState = {
 	username: '',
@@ -19,3 +20,16 @@ export const useAuthStore = create(set => ({
 		set(state => ({ auth: { ...state.auth, accessToken: token } })),
 	clearAuthState: () => ({ auth: { ...initialState } }),
 }));
+
+export const usePersistStore = create(
+	persist(
+		(set, get) => ({
+			persistLogin: false,
+			setPersistLogin: () => set({ persistLogin: !get().persistLogin }),
+		}),
+		{
+			name: 'persist-login', // name of the item in the storage (must be unique)
+			storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+		}
+	)
+);

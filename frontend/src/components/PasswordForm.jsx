@@ -13,7 +13,7 @@ import Avatar from './Avatar';
 
 import { validateFields } from '../helpers/validate';
 import { login } from '../lib/apiRequest';
-import { useAuthStore } from '../store';
+import { useAuthStore, usePersistStore } from '../store';
 
 const PasswordForm = ({ user }) => {
 	const navigate = useNavigate();
@@ -23,6 +23,8 @@ const PasswordForm = ({ user }) => {
 		setAccessToken,
 		auth: { username },
 	} = useAuthStore(state => state);
+
+	const { persistLogin, setPersistLogin } = usePersistStore(state => state);
 
 	const { mutate: loginUser, isLoading } = useMutation(login, {
 		onSuccess: data => {
@@ -47,6 +49,10 @@ const PasswordForm = ({ user }) => {
 		},
 	});
 
+	const togglePersist = () => {
+		setPersistLogin();
+	};
+
 	return (
 		<Form onSubmit={formik.handleSubmit}>
 			<Avatar img={user?.profile} />
@@ -59,11 +65,23 @@ const PasswordForm = ({ user }) => {
 					name='password'
 					formik={formik}
 				/>
+
 				<Button
 					isLoading={isLoading}
 					loadingText='Sign In Loading...'
 					text='Sign In'
 				/>
+
+				<div>
+					<input
+						type='checkbox'
+						name='persistLogin'
+						id='persistLogin'
+						onChange={togglePersist}
+						checked={persistLogin}
+					/>
+					<label htmlFor='persistLogin'>Trust this device!</label>
+				</div>
 			</div>
 
 			<FormFooter
